@@ -1,8 +1,10 @@
+from os import path
 from splashgen import MetaTags, SplashSite, launch
 from splashgen.integrations import MailchimpSignup
 
 site = SplashSite(title="ZenWeb – Python Internal Web Apps",
-                  logo="./logo.svg")
+                  logo=path.join(path.dirname(__file__), "logo.svg"),
+                  theme="dark")
 site.headline = "Effortless internal tools for your backend services"
 site.subtext = """
 Write simple code that plugs directly into your infrastructure, and let ZenWeb

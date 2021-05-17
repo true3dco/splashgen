@@ -57,11 +57,15 @@ class SplashSite(Component):
     subtext: str
     signup_form: Component
 
-    def __init__(self, title: str = "Splash Site", logo: BinaryIO = None, meta: MetaTags = None) -> str:
+    def __init__(self, title: str = "Splash Site", logo: BinaryIO = None, meta: MetaTags = None, theme: str = "light") -> str:
         super().__init__()
         self.title = title
         self.logo = logo
         self.meta = meta
+        if theme not in ["light", "dark"]:
+            raise ValueError(
+                "Invalid theme option. Please specify 'light' or 'dark'")
+        self.theme = theme
         self.headline = "Fill out your headline here by assigning to `headline`"
         self.subtext = "Fill out subtext by assigning to `subtext`"
         self.signup_form = None
