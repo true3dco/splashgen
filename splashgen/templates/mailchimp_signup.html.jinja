@@ -1,0 +1,29 @@
+<div id="mc_embed_signup" class="col-lg-4 mx-auto mb-3">
+  <form
+    action="{{ signup_form_url }}"
+    method="post"
+    id="mc-embedded-subscribe-form"
+    name="mc-embedded-subscribe-form"
+    target="_blank"
+    novalidate
+  >
+    <div class="input-group mb-3">
+      <input
+        type="email"
+        value=""
+        name="EMAIL"
+        class="form-control"
+        id="mce-EMAIL"
+        placeholder="Email address"
+        aria-label="Email Address"
+        required
+      />
+      <div style="position: absolute; left: -5000px" aria-hidden="true">
+        <input type="text" name="{{ bot_buster_id }}" tabindex="-1" value="" />
+      </div>
+      <button class="btn btn-primary" type="submit" id="button-addon2">
+        {{ button_text }}
+      </button>
+    </div>
+  </form>
+</div>
