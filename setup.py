@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="splashgen",
-    version="1.0.0",
+    version="0.0.1",
     description="Create a splash page in less than 20 lines of python",
     long_description=README,
     long_description_content_type="text/markdown",
