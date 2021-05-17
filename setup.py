@@ -13,7 +13,7 @@ setup(
     description="Create a splash page in less than 20 lines of python",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/true3dco/pysplash-prototype",
+    url="https://github.com/true3dco/splashgen",
     author="True3D",
     author_email="founders@true3d.live",
     license="MIT",
@@ -22,10 +22,10 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    packages=["splashgen"], # UPDATE
+    packages=["splashgen"],  # UPDATE
     include_package_data=True,
-    install_requires=["Jinja2", "query_string", "urlexpander"], # Update
-    entry_points={ # UPDATE
+    install_requires=["Jinja2", "query_string", "urlexpander"],  # Update
+    entry_points={  # UPDATE
         "console_scripts": [
             "splashgen=splashgen.__main__:main",
         ]
