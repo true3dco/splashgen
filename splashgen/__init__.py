@@ -3,10 +3,9 @@ import shutil
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from os import path
-from typing import IO, BinaryIO
 
-from PIL import Image
 from jinja2 import Environment, PackageLoader
+from PIL import Image
 
 jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
 
