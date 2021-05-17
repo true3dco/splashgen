@@ -13,7 +13,7 @@ setup(
     description="Create a splash page in less than 20 lines of python",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/true3dco/pysplash-prototype",
+    url="https://github.com/true3dco/splashgen",
     author="True3D",
     author_email="founders@true3d.live",
     license="MIT",
