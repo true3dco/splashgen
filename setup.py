@@ -22,10 +22,10 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    packages=["splashgen"], # UPDATE
+    packages=["splashgen"],  # UPDATE
     include_package_data=True,
-    install_requires=["Jinja2", "query_string", "urlexpander"], # Update
-    entry_points={ # UPDATE
+    install_requires=["Jinja2", "query_string", "urlexpander"],  # Update
+    entry_points={  # UPDATE
         "console_scripts": [
             "splashgen=splashgen.__main__:main",
         ]
