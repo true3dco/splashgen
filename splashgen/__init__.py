@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from os import path
 from typing import IO, BinaryIO
 
+from PIL import Image
 from jinja2 import Environment, PackageLoader
 
 jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
@@ -57,7 +58,7 @@ class SplashSite(Component):
     subtext: str
     signup_form: Component
 
-    def __init__(self, title: str = "Splash Site", logo: BinaryIO = None, meta: MetaTags = None, theme: str = "light") -> str:
+    def __init__(self, title: str = "Splash Site", logo: str = None, meta: MetaTags = None, theme: str = "light") -> str:
         super().__init__()
         self.title = title
         self.logo = logo
@@ -69,12 +70,32 @@ class SplashSite(Component):
         self.headline = "Fill out your headline here by assigning to `headline`"
         self.subtext = "Fill out subtext by assigning to `subtext`"
         self.signup_form = None
+        # TODO: Default favicon
+        self.favicon_img = self.logo
 
     def render(self) -> str:
         logo_url = self.write_asset_to_build(self.logo)
+        favicons = self._gen_favicons()
         return self.into_template("splash_site.html.jinja", extras={
-            "logo": logo_url
+            "logo": logo_url,
+            "favicons": favicons
         })
+
+    def _gen_favicons(self):
+        favicons = []
+        with Image.open(self.favicon_img) as img:
+            for size in [16, 32, 64]:
+                favicon_info = {
+                    "rel": "icon",
+                    "type": "image/png",
+                    "size": f"{size}x{size}",
+                    "filename": f"favicon-{size}x{size}.png"
+                }
+                resized = img.resize((size, size))
+                resized.save(path.join(self.build_dir,
+                             favicon_info["filename"]))
+                favicons.append(favicon_info)
+        return favicons
 
 
 def launch(root: Component) -> None:

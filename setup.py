@@ -24,7 +24,8 @@ setup(
     ],
     packages=["splashgen"],  # UPDATE
     include_package_data=True,
-    install_requires=["Jinja2", "query_string", "urlexpander"],  # Update
+    install_requires=["Jinja2", "query_string",
+                      "urlexpander", "pillow"],  # Update
     entry_points={  # UPDATE
         "console_scripts": [
             "splashgen=splashgen.__main__:main",
