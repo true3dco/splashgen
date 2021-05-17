@@ -43,8 +43,10 @@
       html,
       body {
         height: 100%;
+        {% if theme == "dark" %}
         background: var(--bs-dark);
         color: var(--bs-white);
+        {% endif %}
       }
     </style>
   </head>
@@ -74,7 +76,10 @@
         {{ headline }}
       </h1>
       <div class="col-lg-6 mx-auto">
-        <p class="lead mb-4" style="color: rgba(255, 255, 255, 0.7)">
+        <p
+          class="lead mb-4{% if theme == 'light' %} text-muted{% endif %}"
+          {% if theme == "dark" %}style="color: rgba(255, 255, 255, 0.7)"{% endif %}
+        >
           {{ subtext }}
         </p>
       </div>
