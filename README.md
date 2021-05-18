@@ -125,6 +125,8 @@ and have Netlify build and deploy the site for you.
 > the site. In that case, change `splashgen` in `requirements.txt` to `splashgen==0.0.23`, or whatever the current version
 > you have installed is.
 
+You can see an example of a site deployed to Netlify on [splashgen's splash pages's repo](https://github.com/true3dco/splashgen.sh-site)
+
 ### Opting out of analytics
 
 By default, splasgen sites contain a simple analytics snippet that helps us determine usage. **We explicitly opt-out of tracking
