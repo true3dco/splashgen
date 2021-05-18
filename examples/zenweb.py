@@ -16,7 +16,7 @@ site.meta = MetaTags(title=site.headline,
                      description="Automate your domain expertise. Sign up to join our pilot program!",
                      image="https://t3dmedia.s3.amazonaws.com/_notvideos/zwbg.png",
                      canonical_url="https://zenweb.dev")
-site.signup_form = MailchimpSignup(
+site.call_to_action = MailchimpSignup(
     "http://eepurl.com/hw4od9", button_text="Join our pilot")
 
 launch(site)
