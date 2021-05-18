@@ -11,6 +11,8 @@ jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
 
 _assigned_component = None
 
+_ASSET_DIR = path.join(path.dirname(__file__), 'assets')
+
 
 class Component(ABC):
     jinja = jinja
@@ -75,6 +77,8 @@ class SplashSite(Component):
     def __init__(self, title: str = "Splash Site", logo: str = None, meta: MetaTags = None, theme: str = "light") -> str:
         super().__init__()
         self.title = title
+        if not logo:
+            logo = path.join(_ASSET_DIR, "logo-default.png")
         self.logo = logo
         self.meta = meta
         if theme not in ["light", "dark"]:
