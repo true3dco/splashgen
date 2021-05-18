@@ -121,6 +121,10 @@ and have Netlify build and deploy the site for you.
 1. Put `build` as the publish directory
 1. Click the create button, and your site should now be ready to deploy on Netlify
 
+> **NOTE**: Because splashgen is still in early development, you may want to pin the version of splashgen you used to build
+> the site. In that case, change `splashgen` in `requirements.txt` to `splashgen==0.0.23`, or whatever the current version
+> you have installed is.
+
 ### Opting out of analytics
 
 By default, splasgen sites contain a simple analytics snippet that helps us determine usage. **We explicitly opt-out of tracking
