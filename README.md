@@ -1,27 +1,95 @@
 # SplashGen
 
-## Installation Instructions
+SplashGen lets you rapidly build simple splash pages as easily as you can build a simple command-line application.
+
+You write this:
+
+```python
+# site.py
+
+from splashgen import SplashSite, CTAButton, launch
+
+site = SplashSite(title="Splashgen - Splash Pages Built In Python",
+                  theme="dark")
+site.headline = "Build your splash page in python effortlessly"
+site.subtext = """
+In less than 20 lines of python, create clean and beautiful splash pages with
+Splashgen. Don't waste time with no-code tools when you already know how to
+code.
+"""
+site.call_to_action = CTAButton(
+    "https://github.com/true3dco/splashgen", "View on GitHub")
+
+launch(site)
+```
+
+Run this:
+
+```sh
+splashgen site.py
+python -m http.server --directory build
+```
+
+And get this:
+
+![Example splash site](./screenshot.png)
+
+We built splashgen because we wanted a way to rapidly build splash pages without having to use no-code tools and copy bootstrap
+templates all over the place, and want to share it with you!
+
+## Installation
 
 > **NOTE**: You will need Python 3.7+
 
 `pip install splashgen`
 
-## Getting Started
-
-1. Copy the file contents of [this example](https://github.com/true3dco/splashgen/blob/master/examples/zenweb.py) into a py file of your own
-2. Change the values to reflect your brand
-3. Add in a logo.svg into the same directory as your py file
-4. Run `splashgen <<Your File>>.py` to build the static files
-5. Run `python -m http.server --directory build` to start a HTTP server in the output directory
-6. Head over to [http://localhost:8000/](http://localhost:8000/) to see your splashpage!
-
 ## Usage
+
+### Developing your page
+
+To build your splash page, you write a simple python script using the APIs that `splashgen` provides. Here is the simplest possible way to build a splash page:
+
+```python
+from splashgen import SplashSite, launch
+
+launch(SplashSite())
+```
+
+You use the `SplashSite` class in order to configure properties of your site, such as its headline, its subtext, and its call to action. You can also specify a custom logo (which will be automatically transformed into a favicon), as well as any SEO data you may want for site previews.
+
+`launch` tells splashgen to build the splash site that you've specified.
+
+The easiest way to see what splashgen can do is to look in the `examples/` folder at what's there. You'll find both the [splashgen site](https://splashgen.sh), as well as a splash page for [ZenWeb](https://zenweb.dev), an idea that we had before we started working
+on splashgen :smiley:
+
+### Building your site
+
+When you're ready to build, run `splashgen path/to/file.py`. Splashgen will output the built side within a folder called `build/`, which you can then serve using any http server.
+
+If you want to make a change to the site, simply re-run `splashgen paty/to/file.py`. This will regenerate the site.
+
+> **NOTE**: Any previously built files still persist in the build directory. If you want to do a completely clean rebuild, make sure you `rm -fr build/` first before re-running the command.
 
 ### Deploying to GitHub pages
 
-_TODO_
+You can easily deploy splashgen sites to github pages, as long as you don't mind checking in your `build/` folder with
+your repo.
+
+1. Create a repository which will host your site script.
+1. Write your site script, e.g. `site.py`, at the root of your repo
+1. Run an initial build, e.g. `splashgen build site.py`
+1. `git push` to your repo (NOTE: make sure you _do not put build/ as part of your gitignore_)
+1. On your repo's settings tab, navigate to `Pages` on the sidebar, then under `Source`, choose the folder `/build`
+1. Click "Save"
+
+Now when you go to `<username>.github.io/<repo>`, you should see your built site.
+
+More info: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#choosing-a-publishing-source
 
 ### Deploying to Netlify
+
+You can deploy splashgen sites to [Netlify](https://www.netlify.com/) without checking in your `build/` folder,
+and have Netlify build and deploy the site for you.
 
 _TODO_
 

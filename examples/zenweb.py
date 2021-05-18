@@ -3,7 +3,7 @@ from splashgen import MetaTags, SplashSite, launch
 from splashgen.integrations import MailchimpSignup
 
 site = SplashSite(title="ZenWeb – Python Internal Web Apps",
-                  logo=path.join(path.dirname(__file__), "logo.png"),
+                  logo=path.join(path.dirname(__file__), "zenweb-logo.png"),
                   theme="dark")
 site.headline = "Effortless internal tools for your backend services"
 site.subtext = """
