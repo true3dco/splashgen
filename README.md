@@ -5,7 +5,7 @@ SplashGen lets you rapidly build simple splash pages as easily as you can build 
 You write this:
 
 ```python
-# site.py
+# website.py
 
 from splashgen import SplashSite, CTAButton, launch
 
@@ -26,7 +26,7 @@ launch(site)
 Run this:
 
 ```sh
-splashgen site.py
+splashgen website.py
 python -m http.server --directory build
 ```
 
@@ -76,7 +76,7 @@ You can easily deploy splashgen sites to github pages, as long as you don't mind
 your repo.
 
 1. Create a repository which will host your site script.
-1. Write your site script, e.g. `site.py`, at the root of your repo
+1. Write your site script, e.g. `website.py`, at the root of your repo
 1. Run an initial build, e.g. `splashgen build site.py`
 1. `git push` to your repo (NOTE: make sure you _do not put build/ as part of your gitignore_)
 1. On your repo's settings tab, navigate to `Pages` on the sidebar, then under `Source`, choose the folder `/build`
@@ -108,3 +108,11 @@ site.enable_splashgen_analytics = False
 ## Help us out! :pray:
 
 Splashgen is currently in an early alpha. If there are any missing features that you would like added please open an issue and we will add it in! This API is in flux and will receive significant improvements and changes over the next few weeks.
+
+## FAQ
+
+### I'm seeing an error that says launch() was never called
+
+This is most likely because you've named your Python file something that conflicts with an existing package. E.g.
+if you name your file `site.py`, that conflicts with python's [site module](https://docs.python.org/3/library/site.html).
+We're currently working on a way around this, but for now the easiest thing to do would be to change your file name.

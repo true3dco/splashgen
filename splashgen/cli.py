@@ -1,5 +1,6 @@
 import sys
 import os
+import importlib
 import splashgen
 
 
@@ -34,7 +35,7 @@ def main():
         raise ValueError("Missing file arg")
 
     mod = prepare_import(sys.argv[-1])
-    __import__(mod)
+    importlib.import_module(mod)
     if splashgen._assigned_component is None:
         raise RuntimeError("launch() was never called. Make sure to call "
                            "launch() with your splash site!")
