@@ -34,7 +34,7 @@ And get this:
 
 ![Example splash site](./screenshot.png)
 
-We built splashgen because we wanted a way to rapidly build splash pages without having to use no-code tools and copy bootstrap
+We built splashgen because we wanted a way to rapidly build splash pages without having to use no-code tools or copy bootstrap
 templates all over the place, and want to share it with you!
 
 ## Installation
