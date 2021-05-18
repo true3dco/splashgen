@@ -41,6 +41,15 @@ class Component(ABC):
         pathlib.Path(self.build_dir).mkdir(parents=True, exist_ok=True)
 
 
+class CTAButton(Component):
+    def __init__(self, link: str, text: str) -> None:
+        self.link = link
+        self.text = text
+
+    def render(self) -> str:
+        return f'<a href="{self.link}" class="btn btn-primary btn-lg px-4">{self.text}</a>'
+
+
 @dataclass
 class MetaTags:
     title: str
@@ -55,7 +64,7 @@ class SplashSite(Component):
     meta: MetaTags
     headline: str
     subtext: str
-    signup_form: Component
+    call_to_action: Component
     enable_splashgen_analytics: bool
     """Set this to false to disable analytics.
 
@@ -74,7 +83,7 @@ class SplashSite(Component):
         self.theme = theme
         self.headline = "Fill out your headline here by assigning to `headline`"
         self.subtext = "Fill out subtext by assigning to `subtext`"
-        self.signup_form = None
+        self.call_to_action = None
         self.favicon_img = self.logo
         self.enable_splashgen_analytics = True
 
