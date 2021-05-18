@@ -56,6 +56,12 @@ class SplashSite(Component):
     headline: str
     subtext: str
     signup_form: Component
+    enable_splashgen_analytics: bool
+    """Set this to false to disable analytics.
+
+    We use analytics in order to better understand product usage, and *never*
+    track any personally-identifiable information on users visiting your site.
+    """
 
     def __init__(self, title: str = "Splash Site", logo: str = None, meta: MetaTags = None, theme: str = "light") -> str:
         super().__init__()
@@ -69,8 +75,8 @@ class SplashSite(Component):
         self.headline = "Fill out your headline here by assigning to `headline`"
         self.subtext = "Fill out subtext by assigning to `subtext`"
         self.signup_form = None
-        # TODO: Default favicon
         self.favicon_img = self.logo
+        self.enable_splashgen_analytics = True
 
     def render(self) -> str:
         logo_url = self.write_asset_to_build(self.logo)

@@ -29,7 +29,7 @@ def prepare_import(path):
     return ".".join(module_name[::-1])
 
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) < 2:
         raise ValueError("Missing file arg")
 
@@ -42,3 +42,7 @@ if __name__ == "__main__":
     index = splashgen._assigned_component.render()
     with open(os.path.join(splashgen._assigned_component.build_dir, 'index.html'), 'w') as indexf:
         indexf.write(index)
+
+
+if __name__ == "__main__":
+    main()
