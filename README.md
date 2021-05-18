@@ -70,6 +70,25 @@ If you want to make a change to the site, simply re-run `splashgen paty/to/file.
 
 > **NOTE**: Any previously built files still persist in the build directory. If you want to do a completely clean rebuild, make sure you `rm -fr build/` first before re-running the command.
 
+### Adding a MailChimp signup form
+
+As seen in `examples/zenweb.py`, you can add a [MailChimp](https://mailchimp.com/) signup form to your splash site by doing the
+following.
+
+Get your [signup form url](https://mailchimp.com/help/share-your-signup-form/#Find_share_options) for the form you want to use.
+Then, write the following
+
+```python
+from splashgen.integrations import MailchimpSignup
+
+site = SplashSite(title="...")
+# configure the site
+
+site.call_to_action = MailchimpSignup("<signup form url>", button_text="Join the waitlist")
+```
+
+We plan on adding more integrations soon!
+
 ### Deploying to GitHub pages
 
 You can easily deploy splashgen sites to github pages, as long as you don't mind checking in your `build/` folder with
@@ -91,7 +110,16 @@ More info: https://docs.github.com/en/pages/getting-started-with-github-pages/co
 You can deploy splashgen sites to [Netlify](https://www.netlify.com/) without checking in your `build/` folder,
 and have Netlify build and deploy the site for you.
 
-_TODO_
+1. Create a repository which will host your site script.
+1. Write your site script, e.g. `website.py`, at the root of your repo
+1. From your repo root, run `echo splashgen > requirements.txt`
+1. From your repo root, run `echo 3.7 > runtime.txt`
+1. `git push` to your repo
+1. In the Netlify console, create a new site from git
+1. Add the repo that you just created
+1. Put `splashgen website.py` as the build command
+1. Put `build` as the publish directory
+1. Click the create button, and your site should now be ready to deploy on Netlify
 
 ### Opting out of analytics
 
