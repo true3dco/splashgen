@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from os import path
 
 from jinja2 import Environment, PackageLoader
-from PIL import Image
 
 
 jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
