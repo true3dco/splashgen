@@ -1,5 +1,6 @@
 from os import path
-from splashgen import MetaTags, SplashSite, launch
+from splashgen import MetaTags, launch
+from splashgen.components import SplashSite
 from splashgen.integrations import MailchimpSignup
 
 site = SplashSite(title="ZenWeb – Python Internal Web Apps",
