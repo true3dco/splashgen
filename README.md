@@ -1,6 +1,6 @@
 # SplashGen
 
-SplashGen lets you rapidly build simple splash pages as easily as you can build a simple command-line application.
+SplashGen lets you rapidly build simple landing pages as easily as you can build a simple command-line application.
 
 You write this:
 
@@ -35,7 +35,7 @@ And get this:
 
 ![Example splash site](./screenshot.png)
 
-We built splashgen because we wanted a way to rapidly build splash pages without having to use no-code tools or copy bootstrap
+We built splashgen because we wanted a way to rapidly build landing pages without having to use no-code tools or copy bootstrap
 templates all over the place, and want to share it with you!
 
 ## Installation
