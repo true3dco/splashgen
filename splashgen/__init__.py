@@ -26,7 +26,7 @@ class Component(ABC):
     def write_asset_to_build(self, src: str) -> str:
         self._mkbuild()
         dest = shutil.copy(src, path.join(self.build_dir, path.basename(src)))
-        uri = f"/{path.basename(dest)}"
+        uri = f"{path.basename(dest)}"
         return uri
 
     def into_template(self, template: str, extras: dict = None):
