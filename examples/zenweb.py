@@ -19,5 +19,6 @@ site.meta = MetaTags(title=site.headline,
                      canonical_url="https://zenweb.dev")
 site.call_to_action = MailchimpSignup(
     "http://eepurl.com/hw4od9", button_text="Join our pilot")
+site.hero_image = path.join(path.dirname(__file__), "zenweb-hero-image.png")
 
 launch(site)

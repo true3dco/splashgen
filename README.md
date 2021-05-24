@@ -71,6 +71,15 @@ If you want to make a change to the site, simply re-run `splashgen paty/to/file.
 
 > **NOTE**: Any previously built files still persist in the build directory. If you want to do a completely clean rebuild, make sure you `rm -fr build/` first before re-running the command.
 
+### Adding a hero image
+
+As seen in `examples/zenweb.py`, you can add a hero image to your page by assigning to the `hero_image` property on a
+`SplashSite` instance.
+
+```python
+site.hero_image = "/path/to/hero-image.png"
+```
+
 ### Adding a MailChimp signup form
 
 As seen in `examples/zenweb.py`, you can add a [MailChimp](https://mailchimp.com/) signup form to your splash site by doing the
