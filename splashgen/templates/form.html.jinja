@@ -1,0 +1,8 @@
+<form action="{{ endpoint }}" method="POST" class="text-start mx-auto col-lg-4 col-md-6 col-12">
+  {% for input in inputs %}
+  <div class="mb-3">
+    {{ input }}
+  </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+</form>

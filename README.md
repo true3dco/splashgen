@@ -99,6 +99,34 @@ site.call_to_action = MailchimpSignup("<signup form url>", button_text="Join the
 
 We plan on adding more integrations soon!
 
+### Adding a custom form
+
+You can add a custom form which will POST to an endpoint specified with the given data.
+We currently support a limited subset of form fields. If you need more types of inputs, or
+extended functionality, please file an issue and let us know!
+
+```python
+from splashgen.components import Form, TextInput, EmailInput, SelectInput
+
+inputs = [
+    # NOTE: You can omit the label argument to just use inputs with placeholders
+    TextInput(id="name", label="Name", required=True,
+              placeholder="First and Last"),
+    EmailInput(id="email", label="Email address", required=True),
+    SelectInput(id="role", label="Role", options=[
+        # You can specify a (text, value) tuple, or just provide text, and the
+        # value will be a slugified version of the text.
+        ("CEO/Founder", "exec"),
+        "Engineer",
+        "Other"])
+]
+site.call_to_action = Form(endpoint="http://postman-echo.com/post",
+                           inputs=inputs,
+                           submit_text="Get Started")
+```
+
+For a full-fledged example, see [examples/form_cta.py](./examples/form_cta.py)
+
 ### Deploying to GitHub pages
 
 You can easily deploy splashgen sites to github pages, as long as you don't mind checking in your `build/` folder with
@@ -114,6 +142,9 @@ your repo.
 Now when you go to `<username>.github.io/<repo>`, you should see your built site.
 
 More info: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#choosing-a-publishing-source
+
+Also, check out https://github.com/Dohva/RakdamSplash for an example of how to use GitHub's workflows to
+build a splashgen site without having to check in the `build/` directory ([code](https://github.com/Dohva/RakdamSplash/blob/27e8e64c927ea2c8757b84b530fe3c00f143808f/.github/workflows/python-app.yml)).
 
 ### Deploying to Netlify
 
