@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="splashgen",
-    version="0.0.27",
+    version="0.0.28",
     description="Create a splash page in less than 20 lines of python",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -25,7 +25,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["Jinja2", "query_string",
-                      "urlexpander", "pillow"],  # Update
+                      "urlexpander", "pillow", "python-slugify"],  # Update
     entry_points={
         "console_scripts": [
             "splashgen=splashgen.cli:main",
