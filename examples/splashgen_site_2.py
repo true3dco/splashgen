@@ -1,17 +1,15 @@
 from splashgen import launch
-from splashgen.components import  CTAButton, Link, CTAButtonSecondary
+from splashgen.components import CTAButton, CTAButtonSecondary, Link
 from splashgen.templates import SplashSite2
-from os import path, pardir
 
 site = SplashSite2(title="Splashgen 2 - Splash Pages Built In Python",
-                  theme="dark")
-                  
+                   theme="dark")
 
 site.nav_bar_center_link = Link(
-     "https://github.com/true3dco/splashgen", "About Us"
+    "https://github.com/true3dco/splashgen", "About Us"
 )
 site.nav_bar_right_link = Link(
-     "https://github.com/true3dco/splashgen", "Sign Up"
+    "https://github.com/true3dco/splashgen", "Sign Up"
 )
 
 site.headline = "Build your splash page 2 in python effortlessly"
