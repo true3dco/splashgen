@@ -18,7 +18,7 @@ class SplashSite2(Component):
     subtext: str
     primary_call_to_action: CTAButton
     secondary_call_to_action: CTAButtonSecondary
-    
+
     hero_video: str
 
     enable_splashgen_analytics: bool
@@ -33,7 +33,7 @@ class SplashSite2(Component):
         self.title = title
         if not logo:
             logo = path.join(_ASSET_DIR, "logo-default.png")
-        
+
         self.logo = logo
         self.meta = meta
         if theme not in ["light", "dark"]:
@@ -53,7 +53,7 @@ class SplashSite2(Component):
 
         self.nav_bar_center_link = None
         self.nav_bar_right_link = None
-        
+
         self.enable_splashgen_analytics = True
 
     def render(self) -> str:
@@ -69,5 +69,3 @@ class SplashSite2(Component):
             "favicons": favicons,
             "hero_video": hero_video_url,
         })
-
-

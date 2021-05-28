@@ -1,2 +1,2 @@
-from .SplashSite import SplashSite
-from .SplashSite2 import SplashSite2
+from .splash_site import SplashSite
+from .splash_site_2 import SplashSite2

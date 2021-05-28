@@ -1,5 +1,6 @@
 from splashgen import launch
-from splashgen.components import SplashSite, CTAButton
+from splashgen.templates import SplashSite
+from splashgen.components import CTAButton
 
 
 site = SplashSite(title="Splashgen - Splash Pages Built In Python",

@@ -50,4 +50,3 @@ class SplashSite(Component):
             "favicons": favicons,
             "hero_image": hero_img_url,
         })
-
