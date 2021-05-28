@@ -1,6 +1,11 @@
 {% extends "_base_page.html.jinja" %}
 
 {% block head_styles %}
+  <style>
+    html, body {
+      height: 100%;
+    }
+  </style>
   {% if hero_image %}
   <style>
     #hero-image-container {
