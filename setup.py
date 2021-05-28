@@ -31,5 +31,5 @@ setup(
             "splashgen=splashgen.cli:main",
         ]
     },
-    package_data={'splashgen': ['templates/*.jinja', 'assets/*.png']},
+    package_data={'splashgen': ['jinja_templates/*.jinja', 'assets/*.png']},
 )

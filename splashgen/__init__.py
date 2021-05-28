@@ -3,11 +3,13 @@ import shutil
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from os import path
+from PIL import Image
+
 
 from jinja2 import Environment, PackageLoader
 
 
-jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
+jinja = Environment(loader=PackageLoader("splashgen", "jinja_templates"), autoescape=False)
 
 _assigned_component = None
 
@@ -40,6 +42,21 @@ class Component(ABC):
     def _mkbuild(self):
         pathlib.Path(self.build_dir).mkdir(parents=True, exist_ok=True)
 
+    def _gen_favicons(self):
+        favicons = []
+        with Image.open(self.favicon_img) as img:
+            for size in [16, 32, 64]:
+                favicon_info = {
+                    "rel": "icon",
+                    "type": "image/png",
+                    "size": f"{size}x{size}",
+                    "filename": f"favicon-{size}x{size}.png"
+                }
+                resized = img.resize((size, size))
+                resized.save(path.join(self.build_dir,
+                             favicon_info["filename"]))
+                favicons.append(favicon_info)
+        return favicons
 
 @dataclass
 class MetaTags:
