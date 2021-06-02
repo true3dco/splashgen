@@ -1,5 +1,5 @@
 from splashgen import launch
-from splashgen.components import CTAButton, CTAButtonSecondary, Link
+from splashgen.components import PrimaryButton, SecondaryButton, Link
 from splashgen.templates import SplashSite2
 
 site = SplashSite2(title="Splashgen 2 - Splash Pages Built In Python",
@@ -18,9 +18,9 @@ In less than 20 lines of python, create clean and beautiful splash pages with
 Splashgen. Don't waste time with no-code tools when you already know how to
 code.
 """
-site.primary_call_to_action = CTAButton(
-    "https://github.com/true3dco/splashgen", "View on GitHub")
-site.secondary_call_to_action = CTAButtonSecondary(
-    "https://github.com/true3dco/splashgen", "View on GitHub")
+site.primary_call_to_action = PrimaryButton(link=Link(
+    "https://github.com/true3dco/splashgen", "View on GitHub"))
+site.secondary_call_to_action = SecondaryButton(link=Link(
+    "https://github.com/true3dco/splashgen", "View on GitHub"))
 
 launch(site)

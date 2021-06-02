@@ -1,18 +1,18 @@
-from typing import Dict
-from splashgen.components import CTAButton, CTAButtonSecondary, Link
-from .base import Template
+from splashgen.components import *
+from splashgen.components.layouts import CenteredHeroLayout, StackLayout, NavContentLayout
+from .base import WebApp, WebPage
 
 
-class SplashSite2(Template):
+class SplashSite2(WebApp):
     nav_bar_center_link: Link
     nav_bar_right_link: Link
     headline: str
     subtext: str
-    primary_call_to_action: CTAButton
-    secondary_call_to_action: CTAButtonSecondary
+    primary_call_to_action: PrimaryButton
+    secondary_call_to_action: SecondaryButton
     hero_video: str
 
-    template = "splash_site_2.html.jinja"
+    layout = NavContentLayout()
 
     def __init__(self, **kwargs) -> str:
         super().__init__(**kwargs)
@@ -25,12 +25,32 @@ class SplashSite2(Template):
         self.hero_video = None
         self.nav_bar_center_link = None
         self.nav_bar_right_link = None
+        self.pricing_structure = None
+        self.sign_in_link = ""
 
-    def prep_extras(self) -> Dict:
-        if self.hero_video:
-            hero_video_url = self.write_asset_to_build(self.hero_video)
-        else:
-            hero_video_url = None
-        return {
-            "hero_video": hero_video_url,
-        }
+    def generate(self):
+        self.page_template.nav_actions.append(
+            Link(self.sign_in_link, "Sign In"))
+
+        # is_homepage = Don't show in nav, but make clickable in Logo
+        homepage = WebPage(layout=self.layout, is_homepage=True)
+        homepage.content = CenteredHeroLayout(children=[
+            Headline(self.headline),
+            Subtext(self.subtext),
+            CTABar(primary=self.primary_call_to_action,
+                   secondary=self.secondary_call_to_action),
+            Video(self.write_asset_to_build(self.hero_video)
+                  ) if self.hero_video is not None else None,
+        ])
+        self.add_page(homepage)
+
+        # Shows up in the nav as "Pricing", shows up in the url as "/pricing"
+        pricing = WebPage(template=self.page_template, title="Pricing")
+        pricing.content = StackLayout(direction="vertical", children=[
+            Headline("Affordable pricing for everyone"),
+            Subtext("Cancel whenever you want. Eject to html/css/js anytime."),
+            # PricingUI(pricing_structure=self.pricing_structure)
+        ])
+        self.add_page(pricing)
+
+        return super().generate()
