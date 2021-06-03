@@ -1,5 +1,5 @@
 from typing import List
-from splashgen.components import Component
+from splashgen.components import Component, Html
 from . import Link
 
 
@@ -12,11 +12,11 @@ class _Button(Component):
         self.link = link
         self.text = text
 
-    def html(self):
+    def render(self) -> Component:
         if self.link is not None:
             self.link.classlist.extend(self.classnames)
-            return self.link.html()
-        return f"""<button class="btn btn-primary btn-lg">{self.text}</button>"""
+            return self.link
+        return Html(f"""<button class="btn btn-primary btn-lg">{self.text}</button>""")
 
 
 class PrimaryButton(_Button):

@@ -1,4 +1,4 @@
-from splashgen.components import Component
+from splashgen.components import Component, Html
 
 
 class Headline(Component):
@@ -6,5 +6,5 @@ class Headline(Component):
         super().__init__()
         self.text = text
 
-    def html(self) -> str:
-        return f"""<h1 class="display-5 fw-bold">{self.text}</h1>"""
+    def render(self) -> Component:
+        return Html(f"""<h1 class="display-5 fw-bold">{self.text}</h1>""")

@@ -1,5 +1,5 @@
 from typing import List
-from splashgen.components import Component
+from splashgen.components import Component, Html
 
 
 class Link(Component):
@@ -10,5 +10,5 @@ class Link(Component):
             self.text = self.href
         self.classlist = classlist or []
 
-    def html(self) -> str:
-        return f"""<a href="{self.href}" class="{' '.join(self.classlist)}">{self.text}</a>"""
+    def render(self) -> Component:
+        return Html(f"""<a href="{self.href}" class="{' '.join(self.classlist)}">{self.text}</a>""")

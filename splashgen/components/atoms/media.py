@@ -1,7 +1,7 @@
 import mimetypes
 from os import path
 from typing import Tuple
-from splashgen.components import Component
+from splashgen.components import Component, Html
 
 
 class Video(Component):
@@ -17,13 +17,13 @@ class Video(Component):
         self.mime = mime
         self.aspect_ratio = aspect_ratio or (16, 9)
 
-    def html(self) -> str:
+    def render(self) -> Component:
         ar = f"{self.aspect_ratio[0]}by{self.aspect_ratio[1]}"
-        return f"""
+        return Html(f"""
         <div class="embed-responsive embed-responsive-{ar}">
             <video controls class="embed-responsive-item">
                 <source src="{self.src}" type="{self.mime}"
             </video>
             Sorry, your browser doesn't support videos.
         </div>
-        """
+        """)

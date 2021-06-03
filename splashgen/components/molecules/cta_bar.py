@@ -8,7 +8,7 @@ class CTABar(Component):
         self.primary = primary
         self.secondary = secondary
 
-    def ui(self) -> Component:
+    def render(self) -> Component:
         return StackLayout(direction="horizontal", children=[
             self.primary,
             self.secondary

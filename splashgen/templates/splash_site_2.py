@@ -29,7 +29,9 @@ class SplashSite2(WebApp):
         self.sign_in_link = ""
 
     def generate(self):
-        self.page_template.nav_actions.append(
+        # Determines nav_logo and nav_title
+        self.layout.branding = self.branding
+        self.layout.nav_actions.append(
             Link(self.sign_in_link, "Sign In"))
 
         # is_homepage = Don't show in nav, but make clickable in Logo
@@ -45,7 +47,7 @@ class SplashSite2(WebApp):
         self.add_page(homepage)
 
         # Shows up in the nav as "Pricing", shows up in the url as "/pricing"
-        pricing = WebPage(template=self.page_template, title="Pricing")
+        pricing = WebPage(template=self.layout, title="Pricing")
         pricing.content = StackLayout(direction="vertical", children=[
             Headline("Affordable pricing for everyone"),
             Subtext("Cancel whenever you want. Eject to html/css/js anytime."),
