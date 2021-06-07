@@ -58,7 +58,21 @@ class Component(object):
         """
         return None
 
+    def find_sources(self) -> List[str]:
+        """Gather source files associated with the component.
+
+        If render isn't overridden, this will be used instead.
+        """
+        component_name = self.__class__.__name__
+        extensions = [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"]
+        # CONTINUE HERE, OR JUST PASS __file__ into __init__()
+        dir_path = somehow_find_file_of_calling_class
+        glob_the_dir_path
+        return_the_right_shit
+
     def gen_sources(self, ctx: BuildContext) -> List[str]:
+        # TODO: Either render() or find_sources() or err if nothing there.
+        # Somehow need to get imports from component file!
         pass
 
     def gen_instance(self, ctx: BuildContext) -> str:

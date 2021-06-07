@@ -29,8 +29,6 @@ class SplashSite2(WebApp):
         self.sign_in_link = ""
 
     def generate(self):
-        # Determines nav_logo and nav_title
-        self.layout.branding = self.branding
         self.layout.nav_actions.append(
             Link(self.sign_in_link, "Sign In"))
 
@@ -48,7 +46,7 @@ class SplashSite2(WebApp):
 
         # Shows up in the nav as "Pricing", shows up in the url as "/pricing"
         pricing = WebPage(template=self.layout, title="Pricing")
-        pricing.content = StackLayout(direction="vertical", children=[
+        pricing.content = StackLayout(direction="vertical", alignx="center", children=[
             Headline("Affordable pricing for everyone"),
             Subtext("Cancel whenever you want. Eject to html/css/js anytime."),
             # PricingUI(pricing_structure=self.pricing_structure)
