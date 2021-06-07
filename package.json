@@ -1,9 +1,0 @@
-{
-  "name": "splashgen",
-  "private": true,
-  "version": "0.0.0",
-  "devDependencies": {
-    "@types/react": "^17.0.9",
-    "@types/react-dom": "^17.0.6"
-  }
-}
