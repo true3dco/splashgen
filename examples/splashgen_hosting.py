@@ -1,3 +1,4 @@
+from os import path
 from splashgen import launch
 from splashgen.site_config import Branding, SEO, Link
 from splashgen.site_config.pricing import PricingStructure, Tier, FeatureList, Faq
@@ -7,7 +8,7 @@ from splashgen.templates import SaasMarketingSite
 site = SaasMarketingSite(
     branding=Branding(
         name="Splashgen Hosting",
-        logo="splashgen-logo.svg",
+        logo=path.join(path.dirname(__file__), "splashgen-hosting-logo.svg"),
         theme="dark"),
     seo=SEO(
         title="Splashgen Hosting – Build and deploy landing pages in pure python",

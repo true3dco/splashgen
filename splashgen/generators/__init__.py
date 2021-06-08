@@ -68,12 +68,12 @@ class BuildContext(object):
 
     def mkdirs(self, *dirs: PathLike) -> None:
         for dir in dirs:
-            os.makedirs(dir, exist_ok=True)
+            os.makedirs(self.build_dir / dir, exist_ok=True)
 
     def run_installs_if_necessary(self) -> None:
         if self._pkg_files_changed():
             self._run_npm_install()
-            self._cache_pkg_md5s()
+            self._cache_pkg_md5()
 
     def write_to_public(self, input: PathLike) -> Tuple[bool, str]:
         written = False
@@ -93,31 +93,16 @@ class BuildContext(object):
         gen_favicons_script = Path(self.tmp_dir / "gen-favicons.js")
         shutil.copyfile(_FRONTEND_DIR / "_scripts" / "gen-favicons.js",
                         gen_favicons_script)
-        subprocess.run(f"node {gen_favicons_script} {logo_path} public/",
+        subprocess.run(f"node {Path(*gen_favicons_script.parts[1:])} {Path(*logo_path.parts[1:])} public/",
                        shell=True, cwd=self.build_dir, check=True)
 
     def _pkg_files_changed(self) -> bool:
-        exists, maybe_cached_md5s = self._read_cached_pkg_md5s()
-        if not exists:
-            return True
+        cached_pkg = self._read_cached("package.json-md5")
+        pkg_md5 = self._get_md5(self.build_dir / "package.json")
 
-        (cached_pkg, cached_pkg_lock) = maybe_cached_md5s
-        pkg_md5, pkg_lock_md5 = self._read_pkg_md5s()
-
-        if cached_pkg is not None and pkg_md5 != cached_pkg:
-            return True
-        if cached_pkg_lock is not None and pkg_lock_md5 != cached_pkg_lock:
+        if cached_pkg is None or pkg_md5 != cached_pkg:
             return True
         return False
-
-    def _read_pkg_md5s(self):
-        return (self._get_md5("package.json"),
-                self._get_md5("package-lock.json"))
-
-    def _read_cached_pkg_md5s(self):
-        return (
-            self._read_cached("package.json-md5"),
-            self._read_cached("package-lock.json-md5"))
 
     def _read_cached(self, filename: PathLike) -> Optional[str]:
         cached = None
@@ -133,11 +118,10 @@ class BuildContext(object):
         subprocess.run("npm install", shell=True,
                        cwd=self.build_dir, check=True)
 
-    def _cache_pkg_md5s(self):
-        for file in ("package.json", "package-lock.json"):
-            md5 = self._get_md5(self.build_dir / file)
-            if md5 is not None:
-                self._write_cached(f"{file}-md5", md5)
+    def _cache_pkg_md5(self):
+        md5 = self._get_md5(self.build_dir / "package.json")
+        if md5 is not None:
+            self._write_cached("package.json-md5", md5)
 
     def _write_cached(self, filename: PathLike, content: str) -> None:
         with open(self.cache_dir / filename, 'w') as f:
@@ -283,7 +267,7 @@ class WebApp(object):
 
     def _gen_app_skeleton(self, ctx: BuildContext):
         """Based off the properties in the app, generates pages/_app.tsx."""
-        ctx.copy_from_frontend("components/atoms/branding")
+        ctx.copy_from_frontend("components/atoms/branding.tsx")
         with ctx.source_file('pages/_app.tsx', custom_template="app.tsx.jinja") as app_tsx:
             bs_mod = "bootstrap-dark-5/dist/css/bootstrap-night.min.css" \
                 if self.branding.theme == "dark" \
