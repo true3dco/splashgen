@@ -15,11 +15,7 @@ site = SaasMarketingSite(
         canonical_url="https://splashgen.sh",
         site_image="https://splashgen.sh/splashgen-logo.svg",
     ))
-
-site.nav_links.append(
-    Link("https://github.com/true3dco/splashgen", "About Us"))
-site.nav_actions.append(
-    Link("https://github.com/true3dco/splashgen", "Sign Up"))
+site.sign_in_link = Link("/signin", "Sign up")
 
 site.homepage_headline = "Build your splash page 2 in python effortlessly"
 site.homepage_subtext = """
@@ -33,8 +29,8 @@ site.homepage_primary_call_to_action = PrimaryButton(link=Link(
 site.homepage_secondary_call_to_action = SecondaryButton(link=Link(
     "https://github.com/true3dco/splashgen", "View on GitHub"))
 
-site.pricing_page_headline = "Pricing Page"
-site.pricing_page_subtext = "Witty subtext"
+site.pricing_page_headline = "Affordable pricing for everyone"
+site.pricing_page_subtext = "Cancel whenever you want. Eject to html/css/js anytime."
 site.pricing_structure = PricingStructure(
     tiers=[
         Tier(

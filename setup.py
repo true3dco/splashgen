@@ -32,5 +32,6 @@ setup(
             "splashgen=splashgen.cli:main",
         ]
     },
+    # TODO: Add frontend stuff (but not node_modules nor anything in the gitignore)
     package_data={'splashgen': ['jinja_templates/*.jinja', 'assets/*.png']},
 )

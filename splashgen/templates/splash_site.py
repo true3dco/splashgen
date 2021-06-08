@@ -1,5 +1,5 @@
 from typing import Dict
-from splashgen import Component
+from splashgen.generators import Component
 from .base import Template
 
 

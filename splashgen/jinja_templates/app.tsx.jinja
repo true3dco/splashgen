@@ -1,0 +1,47 @@
+{% if branding.theme == "dark" %}
+import "bootstrap-dark-5/dist/css/bootstrap-night.min.css";
+{% else %}
+import "bootstrap/dist/css/bootstrap.min.css";
+{% endif %}
+import { DefaultSeo } from "next-seo";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { BrandingProvider } from "../components/atoms/branding";
+
+function MyApp({ Component, pageProps }: AppProps) {
+  // TODO: BrandingProvider should provide favicon
+  // This can be created in a build step from the logo for splashgen if none is provided (but need to figure out SVG to img)
+  return (
+    <BrandingProvider
+      branding={{
+        logo: "/splashgen-logo.svg",
+        name: "Splashgen Hosting",
+        theme: "dark",
+      }}
+    >
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <DefaultSeo
+        titleTemplate="%s | Splashgen Hosting – Build and deploy landing pages in pure python"
+        defaultTitle="Splashgen Hosting – Build and deploy landing pages in pure python"
+        description="All it takes is a github repo and 10 lines of python. Get started for free!"
+        canonical="https://splashgen.sh"
+        openGraph={{
+          type: "website",
+          images: [{ url: "https://splashgen.sh/splashgen-logo.svg" }],
+        }}
+        twitter={{
+          cardType: "summary_large_image",
+        }}
+      />
+      <NavContentLayout
+        links={[{ href: "/pricing", text: "Pricing" }]}
+        actions={[{ href: "/login", text: "Log In" }]}
+      >
+        <Component {...pageProps} />
+      </NavContentLayout>
+    </BrandingProvider>
+  );
+}
+export default MyApp;

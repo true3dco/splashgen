@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple, Union
 
 from slugify import slugify
-from splashgen import Component
+from splashgen.generators import Component
 
 
 class Input(Component):

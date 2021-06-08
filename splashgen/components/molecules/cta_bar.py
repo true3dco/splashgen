@@ -1,5 +1,4 @@
-from splashgen.components import Component
-from splashgen.components.layouts import StackLayout
+from splashgen.generators import Component
 
 
 class CTABar(Component):
@@ -7,9 +6,3 @@ class CTABar(Component):
         super().__init__()
         self.primary = primary
         self.secondary = secondary
-
-    def render(self) -> Component:
-        return StackLayout(direction="horizontal", children=[
-            self.primary,
-            self.secondary
-        ])

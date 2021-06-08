@@ -1,4 +1,5 @@
-from typing import NamedTuple, Literal
+from typing import NamedTuple, Optional
+from os import path
 
 
 class Link(NamedTuple):
@@ -8,13 +9,18 @@ class Link(NamedTuple):
 
 class SEO(NamedTuple):
     title: str
-    description: str
-    canonical_url: str
-    site_image: str
+    description: Optional[str] = None
+    canonical_url: Optional[str] = None
+    site_image: Optional[str] = None
 
 
 class Branding(NamedTuple):
     name: str
-    logo: str
+    logo: Optional[str] = None
     # TODO: Use Literal["light", "dark"] instead
-    theme: str
+    theme: str = "light"
+
+
+_ASSET_DIR = path.join(path.dirname(__file__), "..", "assets")
+DEFAULT_BRANDING = Branding(
+    name="Web App", logo=path.join(_ASSET_DIR, "logo-default.png"))

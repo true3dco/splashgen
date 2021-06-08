@@ -1,4 +1,4 @@
-from splashgen.components import Component, Html
+from splashgen.generators import Component
 
 
 class Headline(Component):

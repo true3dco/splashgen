@@ -1,6 +1,6 @@
-from splashgen.components.atoms.link import Link
 from typing import List
-from splashgen.components import Component
+from splashgen.generators import Component
+from splashgen.site_config import Link
 
 
 class AppHeader(Component):

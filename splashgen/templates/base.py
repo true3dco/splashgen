@@ -2,7 +2,8 @@ from os import path
 from typing import Dict
 
 from PIL import Image
-from splashgen import Component, MetaTags
+from splashgen.generators import Component
+from splashgen import MetaTags
 
 _ASSET_DIR = path.join(path.dirname(__file__), '../assets')
 
