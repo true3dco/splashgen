@@ -3,7 +3,7 @@ from typing import Optional
 from splashgen.components import *
 from splashgen.components.layouts import (CenteredHeroLayout, NavContentLayout,
                                           StackLayout)
-from splashgen.generators import WebApp, WebPage
+from splashgen.generators import Component, WebApp, WebPage
 from splashgen.site_config.pricing import PricingStructure
 
 

@@ -8,40 +8,38 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { BrandingProvider } from "../components/atoms/branding";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  // TODO: BrandingProvider should provide favicon
-  // This can be created in a build step from the logo for splashgen if none is provided (but need to figure out SVG to img)
+{% for import_ in imports %}
+{{ import_ }}
+{% endfor %}
+
+{% raw %}
+export default function MyApp({ Component, pageProps }: AppProps) {
+{% endraw %}
   return (
     <BrandingProvider
-      branding={{
-        logo: "/splashgen-logo.svg",
-        name: "Splashgen Hosting",
-        theme: "dark",
-      }}
+      branding={% raw %}{{{% endraw %}
+        logo: {{ logo_path }},
+        name: {{ branding.name }}
+        theme: {{ branding.theme }}
+      {% raw %}}}{% endraw %}
     >
       <Head>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <DefaultSeo
-        titleTemplate="%s | Splashgen Hosting – Build and deploy landing pages in pure python"
-        defaultTitle="Splashgen Hosting – Build and deploy landing pages in pure python"
-        description="All it takes is a github repo and 10 lines of python. Get started for free!"
-        canonical="https://splashgen.sh"
-        openGraph={{
+        titleTemplate="%s | {{ seo.title }}"
+        defaultTitle="{{ seo.title }}"
+        {% if seo.description %}description="All it takes is a github repo and 10 lines of python. Get started for free!"{% endif %}
+        {% if seo.canonical_url %}canonical="https://splashgen.sh"{% endif %}
+        openGraph={% raw %}{{{% endraw %}
           type: "website",
-          images: [{ url: "https://splashgen.sh/splashgen-logo.svg" }],
-        }}
-        twitter={{
+          {% if seo.site_image %}images: [{% raw %}{{% endraw %} url: "{{ seo.site_image }}" {% raw %}}{% endraw %}],{% endif %}
+        {% raw %}}}{% endraw %}
+        twitter={% raw %}{{{% endraw %}
           cardType: "summary_large_image",
-        }}
+        {% raw %}}}{% endraw %}
       />
-      <NavContentLayout
-        links={[{ href: "/pricing", text: "Pricing" }]}
-        actions={[{ href: "/login", text: "Log In" }]}
-      >
-        <Component {...pageProps} />
-      </NavContentLayout>
+      {{ code }}
     </BrandingProvider>
   );
 }
-export default MyApp;
