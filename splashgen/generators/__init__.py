@@ -119,6 +119,10 @@ class BuildContext(object):
             self._run_npm_install()
             self._cache_pkg_md5()
 
+    def run_formatter(self) -> None:
+        subprocess.run("npx prettier --write .",
+                       cwd=self.build_dir, shell=True, check=True)
+
     def write_to_public(self, input: PathLike) -> Tuple[bool, str]:
         written = False
         outfile = self.build_dir / "public" / path.basename(input)
@@ -154,6 +158,10 @@ class BuildContext(object):
         if isinstance(component, _Raw):
             # We treat raw special and just pass through its output.
             return
+        if isinstance(component, WebPage):
+            # For pages, we don't need to import anything into current. Pages
+            # stand on their own
+            return self.ensure_imported_into_current(component.content)
 
         current = self._current_source()
         component_import = self._get_or_generate_import_for_current(component)
@@ -189,14 +197,17 @@ class BuildContext(object):
 
     def _gen_component_source(self, component: 'Component') -> str:
         """Returns the relative path in the build to the component"""
-        if isinstance(component, WebPage):
-            raise NotImplementedError("Can't do pages yet!")
-
         needs_transpile = component.render() is not None
         if needs_transpile:
-            raise NotImplementedError("Transpilation coming soon")
+            return self._gen_sources_from_python(component)
 
         return self._gen_sources_from_frontend(component)
+
+    def _gen_sources_from_python(self, component: 'Component') -> str:
+        if isinstance(component, WebPage):
+            pass
+
+        raise NotImplementedError("Transpilation coming soon")
 
     def _gen_sources_from_frontend(self, component: 'Component') -> str:
         # Do the thing where you we find the right stuff from the frontend dir,
@@ -302,38 +313,45 @@ def _try_stringify_prop_value(value: Any, ctx: BuildContext) -> str:
         dict_keys_need_quoting = True
     if raw_datadict is not None:
         datadict = humps.camelize(raw_datadict)
-        # Need to make a copy here since we modify the dict
-        for k in dict(datadict).keys():
-            conv = _try_stringify_prop_value(datadict[k], ctx)
-            datadict[k] = conv
-        # We do *not* have to quote properties here
-        obj_props = [f'{f"{k}" if dict_keys_need_quoting else k}: {v}' for (
-            k, v) in datadict.items()]
-        return f"{{{', '.join(obj_props)}}}"
+        ctx.write_into_current("{")
+        for i, (k, sub_value) in enumerate(datadict.items()):
+            if i > 0:
+                ctx.write_into_current(", ")
+            dkey = f"{k}" if dict_keys_need_quoting else k
+            ctx.write_into_current(f"{dkey}: ")
+            _try_stringify_prop_value(sub_value, ctx)
+        ctx.write_into_current("}")
+        return
 
     # Primitive types.
+    if valtype in (str, int, float, bool, type(None)):
+        return ctx.write_into_current(json.dumps(value))
 
-    if valtype is str:
-        return json.dumps(value)
-    if valtype in (int, float, bool, type(None)):
-        return f"{json.dumps(value)}"
+    # List types
     if valtype in (tuple, list):
-        sub_stringifications = [
-            _try_stringify_prop_value(v, ctx) for v in value]
-        valid_subs = [ss for ss in sub_stringifications if ss is not None]
-        return f"[{', '.join(valid_subs)}]"
+        ctx.write_into_current("[")
+        for i, sub_value in enumerate(value):
+            if i > 0:
+                ctx.write_into_current(", ")
+            _try_stringify_prop_value(sub_value, ctx)
+        ctx.write_into_current("]")
+        return
 
     # Component / other exotic types
-
     if isinstance(value, Component):
         # Dunno if this works...
-        return value.gen_instance(ctx)
+        value.generate(ctx)
+        return
 
     raise NotImplementedError(
         f"Value of type {valtype} cannot be converted to a prop")
 
 
 class Component(object):
+    def __init__(self, children: List['Component'] = None) -> None:
+        super().__init__()
+        self.children = children or []
+
     def render(self) -> Optional['Component']:
         return None
 
@@ -342,27 +360,25 @@ class Component(object):
         if py_component is not None:
             self._process_py_component(py_component)
 
-    def gen_instance(self, ctx: BuildContext) -> str:
+    def gen_instance(self, ctx: BuildContext) -> None:
         component_name = type(self).__name__
-        props_string = self._gen_props_string(ctx)
-        s = f"<{component_name} {props_string}"
-        if hasattr(self, 'children'):
-            s += ">\n"
+        ctx.write_into_current(f"<{component_name} ")
+        self._gen_props_string(ctx)
+        if self.children:
+            ctx.write_into_current(">\n")
             for child in getattr(self, 'children'):
-                s += child.gen_instance(ctx)
-            s += f"</{component_name}>"
+                child.generate(ctx)
+            ctx.write_into_current(f"\n</{component_name}>")
         else:
-            s += "/>"
-        return s
+            ctx.write_into_current("/>")
 
     def generate(self, ctx: BuildContext):
         ctx.ensure_imported_into_current(self)
-        ctx.write_into_current(self.gen_instance(ctx))
+        self.gen_instance(ctx)
 
     def _gen_props_string(self, ctx: BuildContext):
         ctor_arg_spec = inspect.getfullargspec(type(self).__init__)
         ctor_args_without_self = ctor_arg_spec.args[1:]
-        prop_strings = []
         for arg_name in ctor_args_without_self:
             if arg_name == "children":
                 # We treat children special. Pass.
@@ -372,17 +388,16 @@ class Component(object):
             if not has_matching_attribute:
                 continue
 
+            prop_name = humps.camelize(arg_name)
+            ctx.write_into_current(f"{prop_name}=")
+
             arg_attr_value = getattr(self, arg_name)
-            stringified_value = _try_stringify_prop_value(arg_attr_value, ctx)
             needs_jsx_curlies = type(arg_attr_value) is not str
             if needs_jsx_curlies:
-                stringified_value = f"{{{stringified_value}}}"
-            if stringified_value:
-                prop_name = humps.camelize(arg_name)
-                prop_string = f"{prop_name}={stringified_value}"
-                prop_strings.append(prop_string)
-
-        return " ".join(prop_strings)
+                ctx.write_into_current("{")
+            _try_stringify_prop_value(arg_attr_value, ctx)
+            if needs_jsx_curlies:
+                ctx.write_into_current("}")
 
 
 class _Raw(Component):
@@ -393,35 +408,36 @@ class _Raw(Component):
     def gen_sources(self, ctx: BuildContext) -> List[str]:
         return []
 
-    def gen_instance(self, ctx: BuildContext) -> str:
-        return self.react_code
+    def gen_instance(self, ctx: BuildContext) -> None:
+        return ctx.write_into_current(self.react_code)
 
 
 class WebPage(Component):
     content: Optional[Component]
 
-    def __init__(self, title: str = "", is_homepage: bool = False) -> None:
+    def __init__(self, title: str = "", slug: str = "", is_homepage: bool = False) -> None:
         super().__init__()
-        self.title = title
+        self.title = title or ("Home" if is_homepage else "Page")
+        self.slug = slug or slugify(self.title)
         self.is_homepage = is_homepage
         self.content = None
 
-    def generate(self, ctx: BuildContext):
-        raise NotImplementedError
-        if self.content is None:
-            self.content = _Raw("<div></div>")
-        # Make sure the actual component doesn't get written into its own
-        # source file.
-        self.content._embedded = True
+    def gen_sources(self, ctx: BuildContext) -> List[str]:
+        # For pages, the sources are the content sources themselves
+        if not self.content:
+            return []
+        return self.content.gen_sources(ctx)
 
-        basename = "index" if self.is_homepage else slugify(self.title)
-        extra_template_args = {
-            # page stuff like the name, etc.
-        }
-        # TODO: Subpages / subdirectories
-        # TODO: Figure out how to split up data, etc, for pages
-        with ctx.source_file(f"pages/{basename}.tsx", custom_template="page.tsx.jinja", custom_template_extras=extra_template_args):
-            pass
+    def gen_instance(self, ctx: BuildContext) -> str:
+        # For pages, the *instance* is the actual component definition
+        component_name = humps.pascalize(self.title)
+        ctx.write_into_current(
+            f"export default function {component_name}() {{\n return (\n")
+        if self.content:
+            self.content.generate(ctx)
+        else:
+            ctx.write_into_current("<div></div>")
+        ctx.write_into_current("\n);\n}")
 
 
 class WebApp(object):
@@ -447,7 +463,7 @@ class WebApp(object):
     def add_page(self, page: WebPage) -> None:
         self._pages.append(page)
         if not page.is_homepage:
-            page_link = Link(href=slugify(page.title), text=page.title)
+            page_link = Link(href=page.slug, text=page.title)
             self.nav_links.append(page_link)
 
     def generate(self) -> None:
@@ -522,4 +538,13 @@ class WebApp(object):
 
     def _gen_pages(self, ctx: BuildContext):
         for page in self._pages:
-            page.generate(ctx)
+            if page.content is None:
+                page.content = _Raw("<div></div>")
+            # Hack to get the content to render where the children would normally render
+            page.children = [page.content]
+
+            basename = "index" if page.is_homepage else page.slug
+            # TODO: Subpages / subdirectories
+            # TODO: Figure out how to split up data, etc, for pages
+            with ctx.source_file(f"pages/{basename}.tsx"):
+                page.generate(ctx)
