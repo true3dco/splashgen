@@ -8,6 +8,7 @@ import subprocess
 from contextlib import contextmanager
 from os import PathLike, path
 from pathlib import Path
+from sys import stdout
 from typing import (Any, ContextManager, Dict, List, NamedTuple, Optional, Set,
                     TextIO, Tuple)
 
@@ -234,18 +235,53 @@ class BuildContext(object):
         cmp_path = None
         for file in files:
             rel_path = path.relpath(file, _FRONTEND_DIR)
-            dest_path = self.build_dir / rel_path
-            os.makedirs(path.dirname(dest_path), exist_ok=True)
-            shutil.copyfile(file, dest_path)
+            self.copy_from_frontend(rel_path)
 
             maybe_cmp_path, ext = path.splitext(rel_path)
             if ext in ['.js', '.jsx', '.tsx']:
                 cmp_path = maybe_cmp_path
+                dep_paths = self._get_dep_paths_from_imports_recursive(file)
+                # This should return a list of import statements:
+                # - "../components/foo"
+                # - "../components/bar/baz"
+                # "It should only return *relative* paths" exactly how they appear
+                # In the import statement of the file.
+                # - It should also **recursively** return all imports of imports
+                for dep_path in dep_paths:
+                    normalized_frontend_path = path.relpath(
+                        path.join(path.dirname(file), dep_path),
+                        _FRONTEND_DIR)
+                    if normalized_frontend_path in self._processed_frontend_dep_paths:
+                        return
+                    self._processed_frontend_dep_paths.add(
+                        normalized_frontend_path)
+
+                    resolved_path = normalized_frontend_path
+                    has_no_explicit_extension = not path.splitext(
+                        normalized_frontend_path)[1]
+                    if has_no_explicit_extension:
+                        # TODO: Use actual module resolution strategy
+                        for ext in ['.js', '.jsx', '.tsx']:
+                            if Path(str(normalized_frontend_path) + ext).exists():
+                                resolved_path = normalized_frontend_path
+                                break
+
+                    self.copy_from_frontend(resolved_path)
 
         if cmp_path is None:
             raise RuntimeError(
                 f"Could not find js/jsx/tsx for {component_name}")
         return cmp_path
+
+    def _get_dep_paths_from_imports_recursive(self, cmp_frontend_abs_path: str) -> List[str]:
+        self.copy_from_frontend("_scripts/gather-imports.js")
+        result = subprocess.run(
+            f"node _scripts/gather-imports.js {cmp_frontend_abs_path}",
+            cwd=self.build_dir,
+            check=True,
+            shell=True,
+            stdout=subprocess.PIPE)
+        return result.stdout.decode("utf-8").splitlines()
 
     def _current_source(self) -> SourceFile:
         if not self._source_stack:
