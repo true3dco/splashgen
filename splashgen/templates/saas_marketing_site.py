@@ -3,11 +3,10 @@ from typing import Optional
 from splashgen.components import *
 from splashgen.components.layouts import (CenteredHeroLayout, NavContentLayout,
                                           StackLayout)
-from splashgen.generators import Component, WebApp, WebPage
+from splashgen.generators import WebApp, WebPage
 from splashgen.site_config.pricing import PricingStructure
 
 
-# TODO: WebApp has nav_links + nav_actions + layout + SEO + Branding, etc.
 class SaasMarketingSite(WebApp):
     sign_in_link: Optional[str]
 

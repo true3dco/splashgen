@@ -1,8 +1,4 @@
-{% if branding.theme == "dark" %}
-import "bootstrap-dark-5/dist/css/bootstrap-night.min.css";
-{% else %}
-import "bootstrap/dist/css/bootstrap.min.css";
-{% endif %}
+{% if branding.theme == "dark" %}import "bootstrap-dark-5/dist/css/bootstrap-night.min.css";{% else %}import "bootstrap/dist/css/bootstrap.min.css";{% endif %}
 import { DefaultSeo } from "next-seo";
 import type { AppProps } from "next/app";
 import Head from "next/head";

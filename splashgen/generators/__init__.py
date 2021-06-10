@@ -8,11 +8,12 @@ import subprocess
 from contextlib import contextmanager
 from os import PathLike, path
 from pathlib import Path
-from typing import (Any, ContextManager, Dict, List, NamedTuple, Optional, Set, TextIO,
-                    Tuple)
+from typing import (Any, ContextManager, Dict, List, NamedTuple, Optional, Set,
+                    TextIO, Tuple)
 
 import humps
 from jinja2 import Environment, PackageLoader
+from slugify import slugify
 from splashgen.site_config import DEFAULT_BRANDING, SEO, Branding, Link
 
 _jinja = Environment(loader=PackageLoader(
@@ -280,38 +281,50 @@ class BuildContext(object):
 
 def _try_stringify_prop_value(value: Any, ctx: BuildContext) -> str:
     # TODO: There's probably a much better way to do this
+    # NOTE: This only stringifies the values themselves, the curly braces are
+    # handled elsewhere.
+
     valtype = type(value)
+
+    # Dict types. Note that this needs to come first as NamedTuple is considered
+    # a dict type but would conflict with a valtype is tuple check.
+    raw_datadict = None
+    dict_keys_need_quoting = False
+    # See: https://stackoverflow.com/a/2166841/1509082
+    is_probably_namedtuple = isinstance(value, tuple) \
+        and hasattr(value, '_asdict')
+    if is_probably_namedtuple:
+        raw_datadict = value._asdict()
+    elif dataclasses.is_dataclass(value):
+        raw_datadict = dataclasses.asdict(value)
+    elif valtype is dict:
+        raw_datadict = value
+        dict_keys_need_quoting = True
+    if raw_datadict is not None:
+        datadict = humps.camelize(raw_datadict)
+        # Need to make a copy here since we modify the dict
+        for k in dict(datadict).keys():
+            conv = _try_stringify_prop_value(datadict[k], ctx)
+            datadict[k] = conv
+        # We do *not* have to quote properties here
+        obj_props = [f'{f"{k}" if dict_keys_need_quoting else k}: {v}' for (
+            k, v) in datadict.items()]
+        return f"{{{', '.join(obj_props)}}}"
+
+    # Primitive types.
+
     if valtype is str:
         return json.dumps(value)
     if valtype in (int, float, bool, type(None)):
-        return f"{{{json.dumps(value)}}}"
+        return f"{json.dumps(value)}"
     if valtype in (tuple, list):
         sub_stringifications = [
             _try_stringify_prop_value(v, ctx) for v in value]
         valid_subs = [ss for ss in sub_stringifications if ss is not None]
-        return f"{{[{', '.join(valid_subs)}]}}"
-    if valtype is dict:
-        copy = dict(value)
-        for k in copy.keys():
-            conv = _try_stringify_prop_value(copy[k], ctx)
-            if conv is not None:
-                del copy[k]
-            else:
-                copy[k] = conv
-        # We have to quote properties as they may be any string
-        obj_props = [f'"{k}": {v}' for (k, v) in copy.items()]
-        return f"{{{{{', '.join(obj_props)}}}}}"
-    if dataclasses.is_dataclass(value):
-        datadict = humps.camelize(dataclasses.asdict(value))
-        for k in datadict.keys():
-            conv = _try_stringify_prop_value(datadict[k], ctx)
-            if conv is not None:
-                del datadict[k]
-            else:
-                datadict[k] = conv
-        # We do *not* have to quote properties here
-        obj_props = [f'{k}: {v}' for (k, v) in datadict.items()]
-        return f"{{{{{', '.join(obj_props)}}}}}"
+        return f"[{', '.join(valid_subs)}]"
+
+    # Component / other exotic types
+
     if isinstance(value, Component):
         # Dunno if this works...
         return value.gen_instance(ctx)
@@ -361,6 +374,9 @@ class Component(object):
 
             arg_attr_value = getattr(self, arg_name)
             stringified_value = _try_stringify_prop_value(arg_attr_value, ctx)
+            needs_jsx_curlies = type(arg_attr_value) is not str
+            if needs_jsx_curlies:
+                stringified_value = f"{{{stringified_value}}}"
             if stringified_value:
                 prop_name = humps.camelize(arg_name)
                 prop_string = f"{prop_name}={stringified_value}"
@@ -430,13 +446,28 @@ class WebApp(object):
 
     def add_page(self, page: WebPage) -> None:
         self._pages.append(page)
+        if not page.is_homepage:
+            page_link = Link(href=slugify(page.title), text=page.title)
+            self.nav_links.append(page_link)
 
     def generate(self) -> None:
+        self._maybe_add_nav_info()
+
         build_context = self._mkbuild()
         self._init_base_frontend(build_context)
         self._gen_app_skeleton(build_context)
         self._gen_pages(build_context)
         build_context.run_formatter()
+
+    def _maybe_add_nav_info(self):
+        if not self.layout:
+            return
+
+        # Gross. Figure out better (OOP?) way to do.
+        if hasattr(self.layout, 'links'):
+            self.layout.links.extend(self.nav_links)
+        if hasattr(self.layout, 'actions'):
+            self.layout.actions.extend(self.nav_actions)
 
     def _mkbuild(self) -> BuildContext:
         cwd = Path(".")
