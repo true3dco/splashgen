@@ -7,10 +7,7 @@ import { DefaultSeo } from "next-seo";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { BrandingProvider } from "../components/atoms/branding";
-
-{% for import_ in imports %}
-{{ import_ }}
-{% endfor %}
+{% for import_ in imports %}{{ import_ }}{% endfor %}
 
 {% raw %}
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -18,9 +15,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <BrandingProvider
       branding={% raw %}{{{% endraw %}
-        logo: {{ logo_path }},
-        name: {{ branding.name }}
-        theme: {{ branding.theme }}
+        logo: "{{ logo_path }}",
+        name: "{{ branding.name }}",
+        theme: "{{ branding.theme }}",
       {% raw %}}}{% endraw %}
     >
       <Head>

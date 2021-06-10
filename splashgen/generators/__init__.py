@@ -176,8 +176,11 @@ class BuildContext(object):
         return Import(cmp_cls.__name__, rel_mod_path)
 
     def _resolve_path_with_current(self, cmp_path: str) -> str:
+        """Figures out the right import path from the current file"""
         current = self._current_source()
-        relpath = path.relpath(cmp_path, path.dirname(current.output_path))
+        current_dir_relpath = path.relpath(
+            path.dirname(current.output_path), self.build_dir)
+        relpath = path.relpath(cmp_path, current_dir_relpath)
         if not relpath.startswith('.'):
             # It's in the same directory and we have to add the ./
             relpath = f"./{relpath}"
@@ -219,9 +222,14 @@ class BuildContext(object):
         cmp_path = None
         for file in files:
             rel_path = path.relpath(file, _FRONTEND_DIR)
+            dest_path = self.build_dir / rel_path
+            os.makedirs(path.dirname(dest_path), exist_ok=True)
+            shutil.copyfile(file, dest_path)
+
             maybe_cmp_path, ext = path.splitext(rel_path)
             if ext in ['.js', '.jsx', '.tsx']:
                 cmp_path = maybe_cmp_path
+
         if cmp_path is None:
             raise RuntimeError(
                 f"Could not find js/jsx/tsx for {component_name}")
@@ -329,6 +337,7 @@ class Component(object):
             s += ">\n"
             for child in getattr(self, 'children'):
                 s += child.gen_instance(ctx)
+            s += f"</{component_name}>"
         else:
             s += "/>"
         return s
@@ -342,6 +351,10 @@ class Component(object):
         ctor_args_without_self = ctor_arg_spec.args[1:]
         prop_strings = []
         for arg_name in ctor_args_without_self:
+            if arg_name == "children":
+                # We treat children special. Pass.
+                continue
+
             has_matching_attribute = hasattr(self, arg_name)
             if not has_matching_attribute:
                 continue
