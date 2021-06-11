@@ -90,6 +90,7 @@ _FRONTEND_DIR = (Path(path.dirname(__file__)) / '..' / 'frontend').resolve()
 class BuildContext(object):
     _source_stack: List[SourceFile]
     _component_paths: Dict[Any, str]
+    _processed_frontend_dep_paths: Set[str]
 
     def __init__(self, source_dir: Path, build_dir: Path) -> None:
         self.source_dir = source_dir
@@ -98,6 +99,7 @@ class BuildContext(object):
         self.tmp_dir = self.build_dir / "sg-temp"
         self._source_stack = []
         self._component_paths = {}
+        self._processed_frontend_dep_paths = set()
 
         for dirname in (self.cache_dir, self.tmp_dir):
             os.makedirs(dirname, exist_ok=True)
@@ -122,7 +124,7 @@ class BuildContext(object):
 
     def run_formatter(self) -> None:
         subprocess.run("npx prettier --write .",
-                       cwd=self.build_dir, shell=True, check=True)
+                       cwd=self.build_dir, shell=True, check=True, stdout=subprocess.PIPE)
 
     def write_to_public(self, input: PathLike) -> Tuple[bool, str]:
         written = False
@@ -247,25 +249,28 @@ class BuildContext(object):
                 # "It should only return *relative* paths" exactly how they appear
                 # In the import statement of the file.
                 # - It should also **recursively** return all imports of imports
+                # - All of the imports are import paths relative to <file>, so
+                #   that the logic below can gather the imports.
                 for dep_path in dep_paths:
                     normalized_frontend_path = path.relpath(
                         path.join(path.dirname(file), dep_path),
                         _FRONTEND_DIR)
                     if normalized_frontend_path in self._processed_frontend_dep_paths:
-                        return
+                        continue
+
                     self._processed_frontend_dep_paths.add(
                         normalized_frontend_path)
-
                     resolved_path = normalized_frontend_path
                     has_no_explicit_extension = not path.splitext(
                         normalized_frontend_path)[1]
                     if has_no_explicit_extension:
                         # TODO: Use actual module resolution strategy
-                        for ext in ['.js', '.jsx', '.tsx']:
-                            if Path(str(normalized_frontend_path) + ext).exists():
-                                resolved_path = normalized_frontend_path
+                        for ext in ['.js', '.jsx', '.tsx', '.ts']:
+                            maybe_resolved_path = str(
+                                normalized_frontend_path) + ext
+                            if (_FRONTEND_DIR / maybe_resolved_path).exists():
+                                resolved_path = maybe_resolved_path
                                 break
-
                     self.copy_from_frontend(resolved_path)
 
         if cmp_path is None:
@@ -509,7 +514,21 @@ class WebApp(object):
         self._init_base_frontend(build_context)
         self._gen_app_skeleton(build_context)
         self._gen_pages(build_context)
+        print("Formatting built files")
         build_context.run_formatter()
+
+        rel_build_folder = path.relpath(build_context.build_dir, Path("."))
+        print()
+        print(f"✨ Web App Generated in {rel_build_folder}")
+        print()
+        print("✅ Run/test:")
+        print()
+        print(f"\t(cd {rel_build_folder} && npm run dev)")
+        print()
+        print("🏗  Build:")
+        print()
+        print(f"\t(cd {rel_build_folder} && npm run build)")
+        print()
 
     def _maybe_add_nav_info(self):
         if not self.layout:
@@ -528,6 +547,7 @@ class WebApp(object):
         return BuildContext(cwd, output_dir)
 
     def _init_base_frontend(self, ctx: BuildContext):
+        print("Initializing project structure")
         # Copies tsconfig, package.json, package-lock.json, generates the
         # nextjs directory structure, e.g. pages/ and components/. Only if
         # necessary (e.g. the shasum changes). ctx.write_to_build(file, force=False)
@@ -555,6 +575,7 @@ class WebApp(object):
 
     def _gen_app_skeleton(self, ctx: BuildContext):
         """Based off the properties in the app, generates pages/_app.tsx."""
+        print("Generating app skeleton")
         ctx.copy_from_frontend("components/atoms/branding.tsx")
         # TODO: Dedupe from above
         _, logo_path = ctx.write_to_public(
@@ -573,6 +594,7 @@ class WebApp(object):
             self.layout.generate(ctx)
 
     def _gen_pages(self, ctx: BuildContext):
+        print("Generating pages")
         for page in self._pages:
             if page.content is None:
                 page.content = _Raw("<div></div>")
