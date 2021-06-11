@@ -69,7 +69,10 @@ function convertThePathSoInsteadOfComingFrom(importPath, origFile, targetFile) {
   const absModulePath = path.resolve(origDir, importPath);
 
   const targetDir = path.dirname(targetFile);
-  let relModulePathFromTarget = path.relative(targetDir, absModulePath);
+  // Must use POSIX path normalization to make sure imports are accounted for.
+  let relModulePathFromTarget = path.posix.normalize(
+    path.relative(targetDir, absModulePath)
+  );
   if (!relModulePathFromTarget.startsWith(".")) {
     relModulePathFromTarget = `./${relModulePathFromTarget}`;
   }

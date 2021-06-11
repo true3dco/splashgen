@@ -207,9 +207,6 @@ class BuildContext(object):
         return self._gen_sources_from_frontend(component)
 
     def _gen_sources_from_python(self, component: 'Component') -> str:
-        if isinstance(component, WebPage):
-            pass
-
         raise NotImplementedError("Transpilation coming soon")
 
     def _gen_sources_from_frontend(self, component: 'Component') -> str:
@@ -276,6 +273,9 @@ class BuildContext(object):
         if cmp_path is None:
             raise RuntimeError(
                 f"Could not find js/jsx/tsx for {component_name}")
+        # If we're on windows, we need to convert to POSIX path notation for
+        # imports.
+        cmp_path = cmp_path.replace("\\", "/")
         return cmp_path
 
     def _get_dep_paths_from_imports_recursive(self, cmp_frontend_abs_path: str) -> List[str]:
@@ -523,10 +523,17 @@ class WebApp(object):
         print()
         print("✅ Run/test:")
         print()
-        print(f"\t(cd {rel_build_folder} && npm run dev)")
+        if os.name == 'nt':
+            printf(
+                f"\tpwsh -Command {{ cd {rel_build_folder} ; npm run dev }}")
+        else:
+            print(f"\t(cd {rel_build_folder} && npm run dev)")
         print()
         print("🏗  Build:")
         print()
+        if os.name == 'nt':
+            printf(
+                f"\tpwsh -Command {{ cd {rel_build_folder} ; npm run build }}")
         print(f"\t(cd {rel_build_folder} && npm run build)")
         print()
 
