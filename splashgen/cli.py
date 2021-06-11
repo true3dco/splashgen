@@ -38,7 +38,7 @@ def main():
     importlib.import_module(mod)
     if splashgen._assigned_component is None:
         raise RuntimeError("launch() was never called. Make sure to call "
-                           "launch() with your splash site!")
+                           "launch() with your app!")
 
     splashgen._assigned_component.generate()
 
