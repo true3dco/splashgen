@@ -5,7 +5,7 @@ from splashgen.site_config.pricing import PricingStructure, Tier, FeatureList, F
 from splashgen.components import PrimaryButton, SecondaryButton
 from splashgen.templates import SaasMarketingSite
 
-site = SaasMarketingSite(
+app = SaasMarketingSite(
     branding=Branding(
         name="Splashgen Hosting",
         logo=path.join(path.dirname(__file__), "splashgen-hosting-logo.svg"),
@@ -16,23 +16,23 @@ site = SaasMarketingSite(
         canonical_url="https://splashgen.sh",
         site_image="https://splashgen.sh/splashgen-logo.svg",
     ))
-site.sign_in_link = Link("/signin", "Sign up")
+app.sign_in_link = Link("/signin", "Sign up")
 
-site.homepage_headline = "Build your splash page 2 in python effortlessly"
-site.homepage_subtext = """
+app.homepage_headline = "Build your splash page 2 in python effortlessly"
+app.homepage_subtext = """
 In less than 20 lines of python, create clean and beautiful splash pages with
 Splashgen. Don't waste time with no-code tools when you already know how to
 code.
 """
-site.homepage_demo_video_youtube_id = "HpovwbPGEoo"
-site.homepage_primary_call_to_action = PrimaryButton(link=Link(
+app.homepage_demo_video_youtube_id = "HpovwbPGEoo"
+app.homepage_primary_call_to_action = PrimaryButton(link=Link(
     "https://github.com/true3dco/splashgen", "View on GitHub"))
-site.homepage_secondary_call_to_action = SecondaryButton(link=Link(
+app.homepage_secondary_call_to_action = SecondaryButton(link=Link(
     "https://github.com/true3dco/splashgen", "View on GitHub"))
 
-site.pricing_page_headline = "Affordable pricing for everyone"
-site.pricing_page_subtext = "Cancel whenever you want. Eject to html/css/js anytime."
-site.pricing_structure = PricingStructure(
+app.pricing_page_headline = "Affordable pricing for everyone"
+app.pricing_page_subtext = "Cancel whenever you want. Eject to html/css/js anytime."
+app.pricing_structure = PricingStructure(
     tiers=[
         Tier(
             name="Basic",
@@ -70,4 +70,4 @@ site.pricing_structure = PricingStructure(
     ]
 )
 
-launch(site)
+launch(app)
