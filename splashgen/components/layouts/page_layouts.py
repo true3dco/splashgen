@@ -1,5 +1,5 @@
 from typing import List
-from splashgen.site_config import Branding, DEFAULT_BRANDING, Link
+from splashgen.app_config import Branding, DEFAULT_BRANDING, Link
 from splashgen.generators import Component
 
 

@@ -1,5 +1,5 @@
 from splashgen.generators import Component
-from splashgen.site_config.pricing import PricingStructure
+from splashgen.app_config.pricing import PricingStructure
 
 
 class PricingUI(Component):

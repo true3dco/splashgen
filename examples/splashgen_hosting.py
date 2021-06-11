@@ -1,7 +1,7 @@
 from os import path
 from splashgen import launch
-from splashgen.site_config import Branding, SEO, Link
-from splashgen.site_config.pricing import PricingStructure, Tier, FeatureList, Faq
+from splashgen.app_config import Branding, SEO, Link
+from splashgen.app_config.pricing import PricingStructure, Tier, FeatureList, Faq
 from splashgen.components import PrimaryButton, SecondaryButton
 from splashgen.app_templates import SaasMarketingSite
 

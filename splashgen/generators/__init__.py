@@ -15,7 +15,7 @@ from typing import (Any, ContextManager, Dict, List, NamedTuple, Optional, Set,
 import humps
 from jinja2 import Environment, PackageLoader
 from slugify import slugify
-from splashgen.site_config import DEFAULT_BRANDING, SEO, Branding, Link
+from splashgen.app_config import DEFAULT_BRANDING, SEO, Branding, Link
 
 _jinja = Environment(loader=PackageLoader(
     "splashgen", "jinja_templates"), autoescape=False)

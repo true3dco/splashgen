@@ -1,5 +1,5 @@
 from splashgen.generators import Component
-from splashgen.site_config import Link
+from splashgen.app_config import Link
 
 
 class PrimaryButton(Component):

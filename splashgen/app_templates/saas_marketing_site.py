@@ -4,7 +4,7 @@ from splashgen.components import *
 from splashgen.components.layouts import (CenteredHeroLayout, NavContentLayout,
                                           StackLayout)
 from splashgen.generators import WebApp, WebPage
-from splashgen.site_config.pricing import PricingStructure
+from splashgen.app_config.pricing import PricingStructure
 
 
 class SaasMarketingSite(WebApp):
