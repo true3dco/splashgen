@@ -196,6 +196,9 @@ class BuildContext(object):
         if not relpath.startswith('.'):
             # It's in the same directory and we have to add the ./
             relpath = f"./{relpath}"
+        # Always use POSIX-style paths because that's what the import syntax
+        # is in ECMA
+        relpath = relpath.replace("\\", "/")
         return relpath
 
     def _gen_component_source(self, component: 'Component') -> str:
@@ -525,7 +528,7 @@ class WebApp(object):
         print()
         if os.name == 'nt':
             print(
-                f"\tpwsh -Command {{ cd {rel_build_folder} ; npm run dev }}")
+                f"\tpowershell -Command {{ cd {rel_build_folder} ; npm run dev }}")
         else:
             print(f"\t(cd {rel_build_folder} && npm run dev)")
         print()
@@ -533,7 +536,7 @@ class WebApp(object):
         print()
         if os.name == 'nt':
             print(
-                f"\tpwsh -Command {{ cd {rel_build_folder} ; npm run build }}")
+                f"\tpowershell -Command {{ cd {rel_build_folder} ; npm run build }}")
         else:
             print(f"\t(cd {rel_build_folder} && npm run build)")
         print()
