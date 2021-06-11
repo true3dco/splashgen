@@ -25,11 +25,13 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["Jinja2", "query_string",
-                      "urlexpander", "pillow", "python-slugify"],  # Update
+                      "urlexpander", "pillow",
+                      "python-slugify", "pyhumps"],
     entry_points={
         "console_scripts": [
             "splashgen=splashgen.cli:main",
         ]
     },
-    package_data={'splashgen': ['templates/*.jinja', 'assets/*.png']},
+    # TODO: Add frontend stuff (but not node_modules nor anything in the gitignore)
+    package_data={'splashgen': ['jinja_templates/*.jinja', 'assets/*.png']},
 )

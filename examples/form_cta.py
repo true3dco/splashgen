@@ -1,5 +1,6 @@
 from splashgen import launch
-from splashgen.components import SplashSite, Form, TextInput, EmailInput, SelectInput
+from splashgen.templates import SplashSite
+from splashgen.components import Form, TextInput, EmailInput, SelectInput
 
 site = SplashSite(title="Form example")
 site.headline = "Form example"

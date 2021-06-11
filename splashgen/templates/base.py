@@ -1,18 +1,18 @@
-from splashgen import Component, MetaTags
 from os import path
+from typing import Dict
+
 from PIL import Image
+from splashgen.generators import Component
+from splashgen import MetaTags
 
 _ASSET_DIR = path.join(path.dirname(__file__), '../assets')
 
 
 # TODO: Render favicons, touch icon, splash icons, etc.
 # TODO: Support BG color?
-class SplashSite(Component):
-    meta: MetaTags
-    headline: str
-    subtext: str
-    call_to_action: Component
-    hero_image: str
+class Template(Component):
+    template = ""
+
     enable_splashgen_analytics: bool
     """Set this to false to disable analytics.
 
@@ -20,7 +20,7 @@ class SplashSite(Component):
     track any personally-identifiable information on users visiting your site.
     """
 
-    def __init__(self, title: str = "Splash Site", logo: str = None, meta: MetaTags = None, theme: str = "light") -> str:
+    def __init__(self, title: str = "Website", logo: str = None, meta: MetaTags = None, theme: str = "light") -> None:
         super().__init__()
         self.title = title
         if not logo:
@@ -31,25 +31,8 @@ class SplashSite(Component):
             raise ValueError(
                 "Invalid theme option. Please specify 'light' or 'dark'")
         self.theme = theme
-        self.headline = "Fill out your headline here by assigning to `headline`"
-        self.subtext = "Fill out subtext by assigning to `subtext`"
-        self.call_to_action = None
-        self.hero_image = None
         self.favicon_img = self.logo
         self.enable_splashgen_analytics = True
-
-    def render(self) -> str:
-        logo_url = self.write_asset_to_build(self.logo)
-        if self.hero_image:
-            hero_img_url = self.write_asset_to_build(self.hero_image)
-        else:
-            hero_img_url = None
-        favicons = self._gen_favicons()
-        return self.into_template("splash_site.html.jinja", extras={
-            "logo": logo_url,
-            "favicons": favicons,
-            "hero_image": hero_img_url,
-        })
 
     def _gen_favicons(self):
         favicons = []
@@ -66,3 +49,19 @@ class SplashSite(Component):
                              favicon_info["filename"]))
                 favicons.append(favicon_info)
         return favicons
+
+    def render(self) -> str:
+        if not self.template:
+            raise ValueError("A Jinja template path must must be supplied "
+                             "to the template attribute.")
+        logo_url = self.write_asset_to_build(self.logo)
+        favicons = self._gen_favicons()
+        return self.into_template(self.template, extras={
+            "logo": logo_url,
+            "favicons": favicons,
+            **self.prep_extras(),
+        })
+
+    def prep_extras(self) -> Dict:
+        """Override in subclasses to supply extra information to templates"""
+        return {}

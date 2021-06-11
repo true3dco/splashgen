@@ -1,0 +1,80 @@
+{% extends "_base_page.html.jinja" %}
+
+{% block head_styles %}
+  <style>
+    html, body {
+      height: 100%;
+    }
+  </style>
+  {% if hero_image %}
+  <style>
+    #hero-image-container {
+      max-height: 40vh;
+    }
+
+    @media screen and (max-height: 660px) {
+      #hero-image-container {
+        display: none;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      #hero-image-container {
+        display: none;
+      }
+    }
+  </style>
+  {% endif %}
+{% endblock %}
+
+{% block body %}
+  <body style="display: grid; place-content: center">
+    <div
+      class="
+        d-flex
+        flex-column
+        align-items-center
+        justify-content-center
+        px-4
+        py-lg-3
+        min-vw-100
+        text-center
+      "
+    >
+      {% if logo %}
+      <img
+        class="d-block mx-auto mb-4"
+        src="{{ logo }}"
+        alt=""
+        width="56"
+        height="56"
+      />
+      {% endif %}
+      <h1 class="display-5 fw-bold">
+        {{ headline }}
+      </h1>
+      <div class="col-lg-6 mx-auto">
+        <p
+          class="lead mb-4{% if theme == 'light' %} text-muted{% endif %}"
+          {% if theme == "dark" %}style="color: rgba(255, 255, 255, 0.7)"{% endif %}
+        >
+          {{ subtext }}
+        </p>
+      </div>
+
+      {% if call_to_action %}
+      {{ call_to_action }}
+      {% endif %}
+      {% if hero_image %}
+      <div class="container px-2 overflow-hidden" id="hero-image-container">
+        <img
+          src="{{ hero_image }}"
+          class="img-fluid"
+          alt="Image depicting the product"
+          loading="lazy"
+        />
+      </div>
+      {% endif %}
+    </div>
+  </body>
+{% endblock %}

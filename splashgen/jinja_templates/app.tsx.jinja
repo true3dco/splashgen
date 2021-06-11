@@ -1,0 +1,38 @@
+{% if branding.theme == "dark" %}import "bootstrap-dark-5/dist/css/bootstrap-night.min.css";{% else %}import "bootstrap/dist/css/bootstrap.min.css";{% endif %}
+import { DefaultSeo } from "next-seo";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { BrandingProvider } from "../components/atoms/branding";
+{% for import_ in imports %}{{ import_ }}{% endfor %}
+
+{% raw %}
+export default function MyApp({ Component, pageProps }: AppProps) {
+{% endraw %}
+  return (
+    <BrandingProvider
+      branding={% raw %}{{{% endraw %}
+        logo: "{{ logo_path }}",
+        name: "{{ branding.name }}",
+        theme: "{{ branding.theme }}",
+      {% raw %}}}{% endraw %}
+    >
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <DefaultSeo
+        titleTemplate="%s | {{ seo.title }}"
+        defaultTitle="{{ seo.title }}"
+        {% if seo.description %}description="All it takes is a github repo and 10 lines of python. Get started for free!"{% endif %}
+        {% if seo.canonical_url %}canonical="https://splashgen.sh"{% endif %}
+        openGraph={% raw %}{{{% endraw %}
+          type: "website",
+          {% if seo.site_image %}images: [{% raw %}{{% endraw %} url: "{{ seo.site_image }}" {% raw %}}{% endraw %}],{% endif %}
+        {% raw %}}}{% endraw %}
+        twitter={% raw %}{{{% endraw %}
+          cardType: "summary_large_image",
+        {% raw %}}}{% endraw %}
+      />
+      {{ code }}
+    </BrandingProvider>
+  );
+}

@@ -1,4 +1,4 @@
-from splashgen import Component
+from splashgen.generators import Component
 
 
 class CTAButton(Component):

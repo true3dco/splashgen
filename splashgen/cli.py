@@ -40,9 +40,7 @@ def main():
         raise RuntimeError("launch() was never called. Make sure to call "
                            "launch() with your splash site!")
 
-    index = splashgen._assigned_component.render()
-    with open(os.path.join(splashgen._assigned_component.build_dir, 'index.html'), 'w') as indexf:
-        indexf.write(index)
+    splashgen._assigned_component.generate()
 
 
 if __name__ == "__main__":
