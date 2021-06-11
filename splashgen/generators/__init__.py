@@ -524,7 +524,7 @@ class WebApp(object):
         print("✅ Run/test:")
         print()
         if os.name == 'nt':
-            printf(
+            print(
                 f"\tpwsh -Command {{ cd {rel_build_folder} ; npm run dev }}")
         else:
             print(f"\t(cd {rel_build_folder} && npm run dev)")
@@ -532,7 +532,7 @@ class WebApp(object):
         print("🏗  Build:")
         print()
         if os.name == 'nt':
-            printf(
+            print(
                 f"\tpwsh -Command {{ cd {rel_build_folder} ; npm run build }}")
         print(f"\t(cd {rel_build_folder} && npm run build)")
         print()
