@@ -77,72 +77,12 @@
     <script>
       mixpanel.track('site', {'host': window.location.hostname});
     </script>
-    {% endif %}
-      <script> 
-        var url = new URL(window.location.href);
+    <script> 
+        var url = new URL(url_string);
         var c = url.searchParams.get("code");
-        console.log("JWT:" + localStorage.getItem("jwt_token"));
-        if (c !== null) {        
-
-          console.log(c);
-          
-          awsURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/zenweb-github-access-token-manager";
-          data = {code: c};
-          fetch(awsURL, {
-            method: "POST", 
-            body: JSON.stringify(data),
-          }).then(res => {
-            return res.json();
-          }).then(data=>{ 
-            console.log(data); 
-            // Get the JWT and store it in the localStorage
-            localStorage.setItem("jwt_token", data.jwt_token)
-            // Trigger reload
-            //location.reload();
-           // window.location = window.location.pathname;
-          });
-        }
-        
+        console.log(c);
     </script>
-      <script> 
-      var url = new URL(window.location.href);
-      var access_token = url.searchParams.get("access");
-      var username = url.searchParams.get("username");
-      var repo = url.searchParams.get("repo");
-
-      if (localStorage.getItem("jwt_token") && repo === null) {        
-        data = {jwt_token: localStorage.getItem("jwt_token")};
-        lambdaGetReposURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/repos";
-        fetch(lambdaGetReposURL, {
-          method: "POST", 
-          body:JSON.stringify(data)
-           
-        }).then(res => {
-          return res.json();
-        }).then(data=>{ 
-          console.log(data); 
-          const repoHolder = document.querySelector('#RepoHolder');
-
-          data.forEach((dict) => 
-          {
-            console.log(dict);
-            let li = document.createElement('li');
-              repoHolder.appendChild(li);
-
-              var a = document.createElement('a');
-              var linkText = document.createTextNode(dict.name);
-              a.appendChild(linkText);
-              a.title = dict.name;
-              a.href = window.location + "?repo=" + dict.name;
-              li.appendChild(a);
-            }
-          );
-        });
-
-      }
-  </script>
-
-
+    {% endif %}
   </head>
   <body style="display: grid; place-content: center">
     <div
@@ -191,49 +131,6 @@
         />
       </div>
       {% endif %}
-      <div id="RepoHolder">
-
-      </div>
-      <script> 
-      // Show a deploy button
-      var url = new URL(window.location.href);
-      var repo = url.searchParams.get("repo");
-
-      if (repo !== null && localStorage.getItem("jwt_token")) {        
-        console.log("GOT REPO: ".concat( repo));
-        var a = document.createElement('a');
-        a.title = "deploy: ".concat(repo);
-        a.href = location.protocol + '//' + location.host + location.pathname + "?deployed_repo="+ repo;
-        var linkText = document.createTextNode(a.title);
-        a.appendChild(linkText);
-
-        const repoHolder = document.querySelector('#RepoHolder');
-        repoHolder.appendChild(a);
-
-      }
-     </script>
-      <script> 
-      // Show a deploy button
-      var url = new URL(window.location.href);
-      var deployed_repo = url.searchParams.get("deployed_repo");
-      var username = url.searchParams.get("username");
-
-      if (deployed_repo !== null && localStorage.getItem("jwt_token")) {        
-          createWebhookURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/zenweb-github-create-webhook";
-          data = {jwt_token: localStorage.getItem("jwt_token"), repo: deployed_repo}
-          fetch(createWebhookURL, {
-            method: "POST", 
-            body: JSON.stringify(data),
-          }).then(res => {
-            return res.text();
-          }).then(data=>{ 
-            console.log(data); 
-            //window.location = "?access=".concat(data.access_token).concat("&username=").concat(data.username);
-          });
-
-
-      }
-     </script>
     </div>
   </body>
 </html>
