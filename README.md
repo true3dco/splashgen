@@ -65,7 +65,7 @@ on splashgen :smiley:
 
 ### Building your site
 
-When you're ready to build, run `splashgen path/to/file.py`. Splashgen will output the built side within a folder called `build/`, which you can then serve using any http server.
+When you're ready to build, run `splashgen path/to/file.py`. Splashgen will output the built site within a folder called `build/`, which you can then serve using any http server.
 
 If you want to make a change to the site, simply re-run `splashgen paty/to/file.py`. This will regenerate the site.
 
@@ -170,7 +170,7 @@ You can see an example of a site deployed to Netlify on [splashgen's splash page
 
 ### Opting out of analytics
 
-By default, splasgen sites contain a simple analytics snippet that helps us determine usage. **We explicitly opt-out of tracking
+By default, splashgen sites contain a simple analytics snippet that helps us determine usage. **We explicitly opt-out of tracking
 any personally identifiable information, and only track the site's host name.** As a free and open-source product, it's important
 that we're able to measure usage of splashgen in order to continue to invest in its development.
 
