@@ -6,8 +6,8 @@ from os import path
 
 from jinja2 import Environment, PackageLoader
 
-
-jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
+jinja = Environment(loader=PackageLoader(
+    "splashgen", "jinja_templates"), autoescape=False)
 
 _assigned_component = None
 
