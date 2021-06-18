@@ -315,7 +315,7 @@
                 var code = url.searchParams.get("code");
 
         var selected_app = url.searchParams.get("deployed_app_info");
-        if (localStorage.getItem("jwt_token") && selected_app === null && repo === null && code !== null) {    
+        if (localStorage.getItem("jwt_token") && selected_app === null && repo === null && code === null) {    
           const deployedAppsHolder = document.querySelector('#DeployedAppsHolder');
           deployedAppsHolder.innerHTML = "Deployed Apps";
 
