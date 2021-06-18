@@ -39,13 +39,13 @@ class GithubSignin(Component):
         self.text = text
 
     def render(self) -> str:
-        client_secret = "4a788cdfa7f4e71e678f38d7024781fb412f782d"
         client_id =  "589a43a0032c52da65b4"
         redirect_uri = "http://localhost:8000"
 
         return f"""
-        <a 
+        <a id="githubSignup"
+          class="btn btn-primary btn-lg px-4"
             href="https://github.com/login/oauth/authorize?scope=user,repo&client_id={client_id}&redirect_uri={redirect_uri}"> 
-                Login with Github
+                Start Deploying with Github
         </a>"""
 

@@ -51,6 +51,12 @@
         max-height: 40vh;
       }
 
+    
+      .signOutButton {
+        float: "right";
+      }
+
+
       @media screen and (max-height: 660px) {
         #hero-image-container {
           display: none;
@@ -78,100 +84,101 @@
       mixpanel.track('site', {'host': window.location.hostname});
     </script>
     {% endif %}
-      <script> 
-        var url = new URL(window.location.href);
-        var c = url.searchParams.get("code");
-        console.log("JWT:" + localStorage.getItem("jwt_token"));
-        if (c !== null) {        
 
-          console.log(c);
-          
-          awsURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/zenweb-github-access-token-manager";
-          data = {code: c};
-          fetch(awsURL, {
-            method: "POST", 
-            body: JSON.stringify(data),
-          }).then(res => {
-            return res.json();
-          }).then(data=>{ 
-            console.log(data); 
-            // Get the JWT and store it in the localStorage
-            localStorage.setItem("jwt_token", data.jwt_token)
-            // Trigger reload
-            //location.reload();
-           // window.location = window.location.pathname;
-          });
-        }
-        
+    <script>
+    // This Script tag sends the github CODE to AWS 
+    var url = new URL(window.location.href);
+    var c = url.searchParams.get("code");
+    console.log("JWT:" + localStorage.getItem("jwt_token"));
+    if (c !== null) {        
+
+      console.log(c);
+      
+      awsURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/zenweb-github-access-token-manager";
+      data = {code: c};
+      fetch(awsURL, {
+        method: "POST", 
+        body: JSON.stringify(data),
+      }).then(res => {
+        return res.json();
+      }).then(data=>{ 
+        console.log(data); 
+        localStorage.setItem("jwt_token", data.jwt_token);
+        window.location = window.location.href.split("?")[0];
+
+      });
+    }
     </script>
-      <script> 
-      var url = new URL(window.location.href);
-      var access_token = url.searchParams.get("access");
-      var username = url.searchParams.get("username");
-      var repo = url.searchParams.get("repo");
-
-      if (localStorage.getItem("jwt_token") && repo === null) {        
-        data = {jwt_token: localStorage.getItem("jwt_token")};
-        lambdaGetReposURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/repos";
-        fetch(lambdaGetReposURL, {
-          method: "POST", 
-          body:JSON.stringify(data)
-           
-        }).then(res => {
-          return res.json();
-        }).then(data=>{ 
-          console.log(data); 
-          const repoHolder = document.querySelector('#RepoHolder');
-
-          data.forEach((dict) => 
-          {
-            console.log(dict);
-            let li = document.createElement('li');
-              repoHolder.appendChild(li);
-
-              var a = document.createElement('a');
-              var linkText = document.createTextNode(dict.name);
-              a.appendChild(linkText);
-              a.title = dict.name;
-              a.href = window.location + "?repo=" + dict.name;
-              li.appendChild(a);
-            }
-          );
-        });
+    <script>
+    // This script tag shows all of the repos that are already deployed
+      if (localStorage.getItem("jwt_token")){
 
       }
-  </script>
-
+    </script>
+    
 
   </head>
-  <body style="display: grid; place-content: center">
+  <body style="display: grid;">
+
     <div
       class="
         d-flex
         flex-column
-        align-items-center
-        justify-content-center
         px-4
         py-lg-3
         min-vw-100
-        text-center
       "
     >
+    <button id="homeButton" type="button" class="btn btn-outline-secondary"  style="width: 80px;"> HOME </button>
+    <div></div>
+    <div id="signOut" style="position: fixed; top: 16px; right: 16px;">
+    </div>
+
+    <script>
+        var homeButton = document.getElementById("homeButton");
+        homeButton.addEventListener ("click", function() {
+          window.location = window.location.href.split("?")[0];
+      });
+    </script>
+<script>
+  if (localStorage.getItem("jwt_token")){
+  var button = document.createElement("button");
+
+  document.getElementById("signOut").appendChild(button);
+  button.innerHTML = "LOG ME OUT";
+  button.className += "signOutButton";
+  button.addEventListener ("click", function() {
+  localStorage.removeItem("jwt_token");
+    window.location = window.location.href.split("?")[0];
+    });
+  }
+  else{
+    var signinLink = document.createElement("a");
+    signinLink.href = "https://github.com/login/oauth/authorize?scope=user,repo&client_id=589a43a0032c52da65b4&redirect_uri=http://localhost:8000";
+    signinLink.innerHTML =" LOG IN";
+    signinLink.className += "signOutButton";
+    
+    document.getElementById("signOut").appendChild(signinLink);
+  }
+</script>
+    
       {% if logo %}
       <img
-        class="d-block mx-auto mb-4"
+        class="d-block mx-auto mb-4 remove-when-logged-in"
         src="{{ logo }}"
         alt=""
         width="56"
         height="56"
       />
       {% endif %}
-      <h1 class="display-5 fw-bold">
-        {{ headline }}
-      </h1>
-      <div class="col-lg-6 mx-auto">
+      <div class="remove-when-logged-in">
+        <h1 class="display-5 fw-bold remove-when-logged-in">
+          {{ headline }}
+        </h1>
+      </div>
+      <div class="col-lg-6 mx-auto remove-when-logged-in">
         <p
-          class="lead mb-4{% if theme == 'light' %} text-muted{% endif %}"
+          class="lead remove-when-logged-in mb-4{% if theme == 'light' %} text-muted{% endif %}"
           {% if theme == "dark" %}style="color: rgba(255, 255, 255, 0.7)"{% endif %}
         >
           {{ subtext }}
@@ -191,9 +198,27 @@
         />
       </div>
       {% endif %}
-      <div id="RepoHolder">
+      <div id="DeployedAppsHolder" class="border border-primary"></div>
+      <div id="DeployedAppOptions"></div>
+      <div id="RepoHolder" class="border"></div>
 
-      </div>
+      
+      <script>
+        if (localStorage.getItem("jwt_token")){
+          var x = document.getElementsByClassName("remove-when-logged-in");
+          
+          for (let item of x) {
+            item.remove();
+              
+          } 
+          
+        }
+      </script>
+      <script>
+      if (localStorage.getItem("jwt_token")){
+        document.getElementById("githubSignup").remove(); 
+        }
+      </script>
       <script> 
       // Show a deploy button
       var url = new URL(window.location.href);
@@ -203,21 +228,22 @@
         console.log("GOT REPO: ".concat( repo));
         var a = document.createElement('a');
         a.title = "deploy: ".concat(repo);
-        a.href = location.protocol + '//' + location.host + location.pathname + "?deployed_repo="+ repo;
+        a.href = window.location.href.split("?")[0] + "?deployed_repo="+ repo;
         var linkText = document.createTextNode(a.title);
         a.appendChild(linkText);
 
+        h1 = document.createElement('h1');
+        h1.innerHTML = "Make sure this repository has a splashgen app, when ready deploy!";
         const repoHolder = document.querySelector('#RepoHolder');
+        repoHolder.appendChild(h1);
         repoHolder.appendChild(a);
 
       }
      </script>
       <script> 
-      // Show a deploy button
+      // The repo has been deployed
       var url = new URL(window.location.href);
       var deployed_repo = url.searchParams.get("deployed_repo");
-      var username = url.searchParams.get("username");
-
       if (deployed_repo !== null && localStorage.getItem("jwt_token")) {        
           createWebhookURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/zenweb-github-create-webhook";
           data = {jwt_token: localStorage.getItem("jwt_token"), repo: deployed_repo}
@@ -228,12 +254,138 @@
             return res.text();
           }).then(data=>{ 
             console.log(data); 
+            window.location = window.location.href.split("?")[0];
             //window.location = "?access=".concat(data.access_token).concat("&username=").concat(data.username);
           });
-
-
       }
      </script>
+     <script> 
+      // This Script tag is responsible for getting a list of repos associated with a users personal account 
+        var url = new URL(window.location.href);
+        var repo = url.searchParams.get("repo");
+        var selected_app = url.searchParams.get("deployed_app_info");
+
+        if (localStorage.getItem("jwt_token") && repo === null && selected_app === null) {    
+          const repoHolder = document.querySelector('#RepoHolder');
+          repoHolder.innerHTML = "Choose a Repository to deploy a new splashgen site";
+
+          data = {jwt_token: localStorage.getItem("jwt_token")};
+          lambdaGetReposURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/repos";
+          fetch(lambdaGetReposURL, {
+            method: "POST", 
+            body:JSON.stringify(data)
+            
+          }).then(res => {
+            return res.json();
+          }).then(data=>{ 
+            console.log(data); 
+            var i = 0;
+            try{
+              data.forEach((dict) => 
+              {
+                if (i >= 6) {
+                  throw BreakException;
+                }
+                console.log(dict);
+                let li = document.createElement('li');
+                  repoHolder.appendChild(li);
+
+                  var a = document.createElement('a');
+                  var linkText = document.createTextNode(dict.full_name);
+                  a.appendChild(linkText);
+                  a.title = dict.full_name;
+                  a.href = window.location.href.split("?")[0] + "?repo=" + dict.full_name;
+                  li.appendChild(a);
+                  i ++;
+              });
+            }
+            catch (e) {
+              
+          }});
+
+        }
+    </script>
+ <script> 
+      // This Script tag is responsible for getting a list of deployed apps 
+ 
+        var url = new URL(window.location.href);
+        var repo = url.searchParams.get("repo");
+
+        var selected_app = url.searchParams.get("deployed_app_info");
+        if (localStorage.getItem("jwt_token") && selected_app === null && repo === null) {    
+          const deployedAppsHolder = document.querySelector('#DeployedAppsHolder');
+          deployedAppsHolder.innerHTML = "Deployed Apps";
+
+          data = {jwt_token: localStorage.getItem("jwt_token")};
+          lambdaGetReposURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/apps";
+          fetch(lambdaGetReposURL, {
+            method: "POST", 
+            body:JSON.stringify(data)
+            
+          }).then(res => {
+            return res.json();
+          }).then(data=>{ 
+            console.log(data); 
+            var i = 0;
+    
+              data.forEach((repo) => 
+              {
+                console.log(repo);
+                let li = document.createElement('li');
+                  deployedAppsHolder.appendChild(li);
+
+                  var a = document.createElement('a');
+                  var linkText = document.createTextNode(repo);
+                  a.appendChild(linkText);
+                  a.title = repo;
+                  a.href = window.location.href.split("?")[0] + "?deployed_app_info=" + repo;
+                  li.appendChild(a);
+                  i ++;
+              }); 
+           });
+        }
+    </script>
+
+    <script>
+      var url = new URL(window.location.href);
+      var c = url.searchParams.get("deployed_app_info");
+      if (c !== null) {
+          var header = document.createElement("h1");
+          header.innerHTML = "Selected Repo: "  + c;
+          var a = document.createElement("a");
+          a.title=c;
+          a.innerHTML ="SEE IT LIVE";
+          a.target="_blank"
+          a.href = "https://api.torbjorn.xyz/" + c + "/";
+          var optionsHeader = document.createElement("h2");
+          optionsHeader.innerHTML = "Options";
+          var button = document.createElement("button");
+          button.innerHTML = "Delete";
+          document.getElementById("DeployedAppOptions").appendChild(header);
+          document.getElementById("DeployedAppOptions").appendChild(a);
+          document.getElementById("DeployedAppOptions").appendChild(optionsHeader);
+          document.getElementById("DeployedAppOptions").appendChild(button);
+
+          
+          
+          // DELETE REPO
+          button.addEventListener ("click", function() {
+            lambdaDeleteReposURL = "https://cxpme86mmi.execute-api.us-east-2.amazonaws.com/delete_apps";
+            data = {jwt_token: localStorage.getItem("jwt_token"), repo: c}
+
+            fetch(lambdaDeleteReposURL, {
+              method: "POST", 
+              body:JSON.stringify(data)
+              
+            }).then(res => {
+              return res.json();
+            }).then(data=>{ 
+              console.log(data); 
+              window.location = window.location.href.split("?")[0];
+            });
+          });
+      }
+    </script>
     </div>
   </body>
 </html>
