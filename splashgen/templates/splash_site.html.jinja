@@ -264,8 +264,10 @@
         var url = new URL(window.location.href);
         var repo = url.searchParams.get("repo");
         var selected_app = url.searchParams.get("deployed_app_info");
+        var code = url.searchParams.get("code");
 
-        if (localStorage.getItem("jwt_token") && repo === null && selected_app === null) {    
+
+        if (localStorage.getItem("jwt_token") && repo === null && selected_app === null && code=== null) {    
           const repoHolder = document.querySelector('#RepoHolder');
           repoHolder.innerHTML = "Choose a Repository to deploy a new splashgen site";
 
@@ -310,9 +312,10 @@
  
         var url = new URL(window.location.href);
         var repo = url.searchParams.get("repo");
+                var code = url.searchParams.get("code");
 
         var selected_app = url.searchParams.get("deployed_app_info");
-        if (localStorage.getItem("jwt_token") && selected_app === null && repo === null) {    
+        if (localStorage.getItem("jwt_token") && selected_app === null && repo === null && code !== null) {    
           const deployedAppsHolder = document.querySelector('#DeployedAppsHolder');
           deployedAppsHolder.innerHTML = "Deployed Apps";
 
