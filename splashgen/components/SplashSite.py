@@ -1,8 +1,15 @@
 from splashgen import Component, MetaTags
 from os import path
 from PIL import Image
+from urlextract import URLExtract
+from validate_email import validate_email
 
 _ASSET_DIR = path.join(path.dirname(__file__), '../assets')
+
+
+def _is_email(url):
+    return bool(validate_email(
+        url, check_dns=False, check_blacklist=False, check_smtp=False))
 
 
 # TODO: Render favicons, touch icon, splash icons, etc.
@@ -39,6 +46,7 @@ class SplashSite(Component):
         self.enable_splashgen_analytics = True
 
     def render(self) -> str:
+        self._process_links()
         logo_url = self.write_asset_to_build(self.logo)
         if self.hero_image:
             hero_img_url = self.write_asset_to_build(self.hero_image)
@@ -50,6 +58,16 @@ class SplashSite(Component):
             "favicons": favicons,
             "hero_image": hero_img_url,
         })
+
+    def _process_links(self):
+        extractor = URLExtract(extract_email=True)
+        for url in extractor.gen_urls(self.subtext):
+            if _is_email(url):
+                href = f"mailto:{url}"
+            else:
+                href = url
+            link = f"<a href={href}>{url}</a>"
+            self.subtext = self.subtext.replace(url, link)
 
     def _gen_favicons(self):
         favicons = []

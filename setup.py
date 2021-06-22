@@ -25,7 +25,8 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["Jinja2", "query_string",
-                      "urlexpander", "pillow", "python-slugify"],  # Update
+                      "urlexpander", "pillow", "python-slugify",
+                      "urlextract", "py3-validate-email"],  # Update
     entry_points={
         "console_scripts": [
             "splashgen=splashgen.cli:main",

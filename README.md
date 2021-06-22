@@ -63,6 +63,8 @@ You use the `SplashSite` class in order to configure properties of your site, su
 The easiest way to see what splashgen can do is to look in the `examples/` folder at what's there. You'll find both the [splashgen site](https://splashgen.sh), as well as a splash page for [ZenWeb](https://zenweb.dev), an idea that we had before we started working
 on splashgen :smiley:
 
+> **NOTE**: If you include URLs and emails in the subtext, splashgen will automatically linkify them for you.
+
 ### Building your site
 
 When you're ready to build, run `splashgen path/to/file.py`. Splashgen will output the built site within a folder called `build/`, which you can then serve using any http server.
