@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    {% for favicon in favicons %}
+    <link rel="{{favicon['rel']}}" type="{{favicon['type']}}" sizes="{{favicon['size']}}" href="{{favicon['filename']}}" />
+    {% endfor %}
+    <meta name="theme-color" content="{% if theme == 'dark' %}#1eaee0{% else %}#ffffff{% endif %}" />
+    {% if meta %}
+    <meta name="title" content="{{ meta.title }}" />
+    <meta name="description" content="{{ meta.description }}" />
+
+    <meta property="og:type" content="website" />
+    <meta property="twitter:card" content="summary_large_image" />
+    {% if meta.canonical_url %}
+    <meta property="og:url" content="{{ meta.canonical_url }}" />
+    <meta property="twitter:url" content="{{ meta.canonical_url }}" />
+    {% endif %}
+
+    <meta property="og:title" content="{{ meta.title }}" />
+    <meta property="og:description" content="{{ meta.description }}" />
+    <meta property="twitter:title" content="{{ meta.title }}" />
+    <meta property="twitter:description" content="{{ meta.description }}" />
+
+    {% if meta.image %}
+    <meta property="og:image" content="{{ meta.image }}" />
+    <meta property="twitter:image" content="{{ meta.image }}" />
+    {% endif %} {% endif %}
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+    <style>
+      html,
+      body {
+        height: 100%;
+        {% if theme == "dark" %}
+        background: var(--bs-dark);
+        color: var(--bs-white);
+        {% endif %}
+      }
+
+      {% if hero_image %}
+      #hero-image-container {
+        max-height: 40vh;
+      }
+
+      @media screen and (max-height: 660px) {
+        #hero-image-container {
+          display: none;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        #hero-image-container {
+          display: none;
+        }
+      }
+      {% endif %}
+    </style>
+    {% if enable_splashgen_analytics %}
+    <script>(function(f,b){if(!b.__SV){var e,g,i,h;window.mixpanel=b;b._i=[];b.init=function(e,f,c){function g(a,d){var b=d.split(".");2==b.length&&(a=a[b[0]],d=b[1]);a[d]=function(){a.push([d].concat(Array.prototype.slice.call(arguments,0)))}}var a=b;"undefined"!==typeof c?a=b[c]=[]:c="mixpanel";a.people=a.people||[];a.toString=function(a){var d="mixpanel";"mixpanel"!==c&&(d+="."+c);a||(d+=" (stub)");return d};a.people.toString=function(){return a.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
+      for(h=0;h<i.length;h++)g(a,i[h]);var j="set set_once union unset remove delete".split(" ");a.get_group=function(){function b(c){d[c]=function(){call2_args=arguments;call2=[c].concat(Array.prototype.slice.call(call2_args,0));a.push([e,call2])}}for(var d={},e=["get_group"].concat(Array.prototype.slice.call(arguments,0)),c=0;c<j.length;c++)b(j[c]);return d};b._i.push([e,f,c])};b.__SV=1.2;e=f.createElement("script");e.type="text/javascript";e.async=!0;e.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?
+      MIXPANEL_CUSTOM_LIB_URL:"file:"===f.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";g=f.getElementsByTagName("script")[0];g.parentNode.insertBefore(e,g)}})(document,window.mixpanel||[]);
+      mixpanel.init("de3f5d107b7d40401a23cb003a69a492", {
+        batch_requests: true,
+        ip: false,
+        property_blacklist: ['$browser', '$browser_version', '$device', '$device_id', '$user_id', '$current_url', '$initial_referrer', '$initial_referring_domain', '$os', '$referrer', '$referring_domain', '$screen_height', '$screen_width', '$search_engine', 'mp_keyword', 'utm_source', 'utm_referrer', 'utm_campaign']
+      });
+    </script>
+    <script>
+      mixpanel.track('site', {'host': window.location.hostname});
+    </script>
+    <script> 
+        var url = new URL(url_string);
+        var c = url.searchParams.get("code");
+        console.log(c);
+    </script>
+    {% endif %}
+  </head>
+  <body style="display: grid; place-content: center">
+    <div
+      class="
+        d-flex
+        flex-column
+        align-items-center
+        justify-content-center
+        px-4
+        py-lg-3
+        min-vw-100
+        text-center
+      "
+    >
+      {% if logo %}
+      <img
+        class="d-block mx-auto mb-4"
+        src="{{ logo }}"
+        alt=""
+        width="56"
+        height="56"
+      />
+      {% endif %}
+      <h1 class="display-5 fw-bold">
+        {{ headline }}
+      </h1>
+      <div class="col-lg-6 mx-auto">
+        <p
+          class="lead mb-4{% if theme == 'light' %} text-muted{% endif %}"
+          {% if theme == "dark" %}style="color: rgba(255, 255, 255, 0.7)"{% endif %}
+        >
+          {{ subtext }}
+        </p>
+      </div>
+
+      {% if call_to_action %}
+      {{ call_to_action }}
+      {% endif %}
+      {% if hero_image %}
+      <div class="container px-2 overflow-hidden" id="hero-image-container">
+        <img
+          src="{{ hero_image }}"
+          class="img-fluid"
+          alt="Image depicting the product"
+          loading="lazy"
+        />
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>

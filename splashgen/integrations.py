@@ -31,3 +31,21 @@ class MailchimpSignup(Component):
         ps = ps._replace(path=f"{ps.path}/post")
         qs = query_string.parse(ps.query)
         return ps, qs
+
+class GithubSignin(Component):
+
+    def __init__(self, link: str, text: str) -> None:
+        self.link = link
+        self.text = text
+
+    def render(self) -> str:
+        client_id =  "589a43a0032c52da65b4"
+        redirect_uri = "http://localhost:8000"
+
+        return f"""
+        <a id="githubSignup"
+          class="btn btn-primary btn-lg px-4"
+            href="https://github.com/login/oauth/authorize?scope=user,repo&client_id={client_id}&redirect_uri={redirect_uri}"> 
+                Start Deploying with Github
+        </a>"""
+
