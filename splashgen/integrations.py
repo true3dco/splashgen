@@ -1,6 +1,7 @@
 from typing import Tuple
 from urllib.parse import ParseResult, urlparse
 
+from os import path
 import query_string
 import urlexpander
 
@@ -20,7 +21,8 @@ class MailchimpSignup(Component):
         self.button_text = button_text
 
     def render(self) -> str:
-        return self.into_template("mailchimp_signup.html.jinja")
+        template_file = path.join(path.dirname(__file__), "..", "templates", "mailchimp_signup.html.jinja")
+        return self.into_template(template_file=template_file)
 
     def _parse_signup_url(self, url: str) -> Tuple[ParseResult, dict]:
         expanded_url = self._url_cache.get(url, urlexpander.expand(url))

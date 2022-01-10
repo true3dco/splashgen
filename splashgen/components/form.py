@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple, Union
 
+from os import path
 from slugify import slugify
 from splashgen import Component
 
@@ -14,7 +15,8 @@ class Input(Component):
         self.placeholder = placeholder
 
     def render(self) -> str:
-        return self.into_template("input.html.jinja")
+        template_file = path.join(path.dirname(__file__), "..", "templates", "input.html.jinja")
+        return self.into_template(template_file=template_file)
 
 
 class TextInput(Input):
@@ -50,4 +52,5 @@ class Form(Component):
         self.submit_text = submit_text
 
     def render(self) -> str:
-        return self.into_template("form.html.jinja")
+        template_file = path.join(path.dirname(__file__), "..", "templates", "form.html.jinja")
+        return self.into_template(template_file=template_file)

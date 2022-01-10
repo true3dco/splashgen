@@ -4,16 +4,14 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from os import path
 
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
 
-
-jinja = Environment(loader=PackageLoader("splashgen"), autoescape=False)
 
 _assigned_component = None
 
 
 class Component(ABC):
-    jinja = jinja
+    jinja = None
     build_dir = "build"
 
     @abstractmethod
@@ -29,8 +27,9 @@ class Component(ABC):
         uri = f"{path.basename(dest)}"
         return uri
 
-    def into_template(self, template: str, extras: dict = None):
-        tmpl = self.jinja.get_template(template)
+    def into_template(self, template_file: str, extras: dict = None):
+        jinja = Environment(loader=FileSystemLoader(searchpath=path.dirname(template_file)), autoescape=False)
+        tmpl = jinja.get_template(path.basename(template_file))
         data = self.__dict__
         if extras is None:
             extras = {}
