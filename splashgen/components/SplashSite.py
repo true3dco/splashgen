@@ -21,13 +21,15 @@ class SplashSite(Component):
     call_to_action: Component
     hero_image: str
     enable_splashgen_analytics: bool
+    template_file: str
     """Set this to false to disable analytics.
 
     We use analytics in order to better understand product usage, and *never*
     track any personally-identifiable information on users visiting your site.
     """
 
-    def __init__(self, title: str = "Splash Site", logo: str = None, meta: MetaTags = None, theme: str = "light") -> str:
+    def __init__(self, title: str = "Splash Site", logo: str = None, meta: MetaTags = None, theme: str = "light",
+                 template_file: str = None):
         super().__init__()
         self.title = title
         if not logo:
@@ -44,6 +46,10 @@ class SplashSite(Component):
         self.hero_image = None
         self.favicon_img = self.logo
         self.enable_splashgen_analytics = True
+        if template_file:
+            self.template_file = template_file
+        else:
+            self.template_file = path.join(path.dirname(__file__), "..", "templates", "splash_site.html.jinja")
 
     def render(self) -> str:
         self._process_links()
@@ -53,7 +59,7 @@ class SplashSite(Component):
         else:
             hero_img_url = None
         favicons = self._gen_favicons()
-        return self.into_template("splash_site.html.jinja", extras={
+        return self.into_template(template_file=self.template_file, extras={
             "logo": logo_url,
             "favicons": favicons,
             "hero_image": hero_img_url,
